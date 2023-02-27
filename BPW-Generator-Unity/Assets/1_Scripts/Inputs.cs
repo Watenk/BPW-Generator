@@ -6,6 +6,8 @@ public class Inputs : BaseClass
 {
     public Grid Grid;
     public float ScrollSpeed;
+    public int minCamSize;
+    public int maxCamSize;
 
     private Vector2 referenceMousePos;
     private WatenkLib watenkLib;
@@ -53,12 +55,12 @@ public class Inputs : BaseClass
             Camera.main.transform.position = newPos;
         }
 
-        if (Input.mouseScrollDelta.y > 0f && Camera.main.orthographicSize > 1 && Input.GetMouseButton(2) == false) //Scroll up
+        if (Input.mouseScrollDelta.y > 0f && Camera.main.orthographicSize > minCamSize && Input.GetMouseButton(2) == false) //Scroll up
         {
             Camera.main.orthographicSize -= Camera.main.orthographicSize * ScrollSpeed * 0.01f;
         }
 
-        if (Input.mouseScrollDelta.y < 0f && Input.GetMouseButton(2) == false) //Scroll down
+        if (Input.mouseScrollDelta.y < 0f && Camera.main.orthographicSize < maxCamSize && Input.GetMouseButton(2) == false) //Scroll down
         {
             Camera.main.orthographicSize += Camera.main.orthographicSize * ScrollSpeed * 0.01f;
         }
