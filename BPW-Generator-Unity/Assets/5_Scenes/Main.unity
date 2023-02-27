@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,38 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &644927665
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 644927666}
-  m_Layer: 0
-  m_Name: EntityGrid
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &644927666
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 644927665}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 535.37103, y: -575.21936, z: 492.3567}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1946976168}
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &662732434
 GameObject:
   m_ObjectHideFlags: 0
@@ -164,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 662732436}
-  - component: {fileID: 662732435}
+  - component: {fileID: 662732437}
   m_Layer: 0
   m_Name: FloorGrid
   m_TagString: Untagged
@@ -172,22 +140,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &662732435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 662732434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f4c27f5235e1744b822583163c72c29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Width: 1000
-  Height: 1000
-  WallTile: 2
-  FloorTile: 1
 --- !u!4 &662732436
 Transform:
   m_ObjectHideFlags: 0
@@ -204,6 +156,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &662732437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662732434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de2144ac3cbdc9542bfd06d8f0a16233, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Width: 1000
+  Height: 1000
+  MinRoomSize: 5
+  MaxRoomSize: 50
+  RoomAmount: 1000
+  RetryFailedRoomGeneration: 100
+  Wall: 2
+  Floor: 1
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,41 +412,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20af6e8f020230e4cb5f874f01398dbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Grid: {fileID: 662732435}
+  Grid: {fileID: 0}
   ScrollSpeed: 5
   minCamSize: 1
   maxCamSize: 100
---- !u!1 &1946976167
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1946976168}
-  m_Layer: 0
-  m_Name: EntityRenderer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1946976168
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1946976167}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 644927666}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2005937975
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,7 +447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 069127d3f30448148ba01d4de1cf7294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Grid: {fileID: 662732435}
+  Grid: {fileID: 662732437}
   TileAmount: 10
   TexturePixelWidth: 320
   UVFloatErrorMargin: 0.01

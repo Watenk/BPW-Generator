@@ -19,6 +19,11 @@ public class WatenkLib
         mouseXInt = (int)Mathf.Round(mouseInput.x);
         mouseYInt = (int)Mathf.Round(mouseInput.y);
     }
+
+    public int GetRandomInt(int min, int max)
+    {
+        return Random.Range(min, max);
+    }
 }
 
 public class FSM

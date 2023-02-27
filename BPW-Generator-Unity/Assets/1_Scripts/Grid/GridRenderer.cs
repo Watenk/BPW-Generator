@@ -26,7 +26,6 @@ public class GridRenderer : BaseClassLate
         GenerateMesh();
         GenerateQuadCollections();
         GenerateUVs(TileAmount, TexturePixelWidth);
-        Draw();
     }
 
     public override void OnUpdate()
@@ -34,6 +33,7 @@ public class GridRenderer : BaseClassLate
         SetMeshBoundToCam();
     }
 
+    [ContextMenu("Draw")]
     private void Draw()
     {
         GenerateQuads();
@@ -49,7 +49,6 @@ public class GridRenderer : BaseClassLate
 
     private void UpdateMesh()
     {
-        //Update Mesh
         mesh.vertices = vertices;
         mesh.uv = uv;
         mesh.triangles = triangles;
