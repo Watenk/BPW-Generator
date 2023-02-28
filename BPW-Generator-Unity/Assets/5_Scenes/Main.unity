@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -168,14 +168,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de2144ac3cbdc9542bfd06d8f0a16233, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 1000
-  Height: 1000
+  gridRenderer: {fileID: 2005937976}
+  Width: 500
+  Height: 500
+  WorldGenerationTiles: 01000000020000000300000004000000
+  PerlinMagnification: 40
+  RoomTiles: 0300000004000000
+  RoomsFloor: 5
+  RoomAmount: 500
   MinRoomSize: 5
-  MaxRoomSize: 50
-  RoomAmount: 1000
-  RetryFailedRoomGeneration: 100
-  Wall: 2
-  Floor: 1
+  MaxRoomSize: 20
+  RoomAvoidEdges: 2
+  RetryFailedRoomGeneration: 10000
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -384,7 +388,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12c916773db09a54a88c8aea4c37365b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PhysicsFrameRate: 20
+  PhysicsFrameRate: 60
 --- !u!4 &1349338432
 Transform:
   m_ObjectHideFlags: 0
@@ -412,10 +416,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20af6e8f020230e4cb5f874f01398dbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Grid: {fileID: 0}
+  Grid: {fileID: 662732437}
   ScrollSpeed: 5
   minCamSize: 1
-  maxCamSize: 100
+  maxCamSize: 180
 --- !u!1 &2005937975
 GameObject:
   m_ObjectHideFlags: 0

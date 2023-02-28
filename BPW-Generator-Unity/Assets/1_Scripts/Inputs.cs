@@ -24,14 +24,14 @@ public class Inputs : BaseClass
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             watenkLib.ConvertMouseToInts(mousePos, out int mouseXInt, out int mouseYInt);
-            Grid.SetTile(mouseXInt, -mouseYInt, ID.floor);
+            Grid.SetTile(mouseXInt, -mouseYInt, ID.water, true);
         }
 
         if (Input.GetMouseButton(1))
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             watenkLib.ConvertMouseToInts(mousePos, out int mouseXInt, out int mouseYInt);
-            Grid.SetTile(mouseXInt, -mouseYInt, ID.wall);
+            Grid.SetTile(mouseXInt, -mouseYInt, ID.grass, true);
         }
 
         if (Input.GetMouseButtonDown(2))

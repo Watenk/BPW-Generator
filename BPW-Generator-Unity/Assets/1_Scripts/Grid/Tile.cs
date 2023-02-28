@@ -5,8 +5,11 @@ using UnityEngine;
 public enum ID
 {
     none,
-    floor,
-    wall,
+    water,
+    grass,
+    stone,
+    snow,
+    pavedStone,
 }
 
 public class Tile

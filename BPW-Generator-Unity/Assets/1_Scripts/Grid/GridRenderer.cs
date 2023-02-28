@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridRenderer : BaseClassLate
+public class GridRenderer : BaseClass
 {
     public Grid Grid;
     public int TileAmount;
@@ -33,8 +33,7 @@ public class GridRenderer : BaseClassLate
         SetMeshBoundToCam();
     }
 
-    [ContextMenu("Draw")]
-    private void Draw()
+    public void Draw()
     {
         GenerateQuads();
         UpdateMesh();
