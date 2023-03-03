@@ -25,7 +25,7 @@ public class Room
     {
         int xMiddle = xLenght / 2;
         int yMiddle = yLenght / 2;
-        return new Vector2Int(xMiddle, yMiddle);
+        return new Vector2Int(x1 + xMiddle, y1 + yMiddle);
     }
 
     public Vector2Int GetRandomPos() 
