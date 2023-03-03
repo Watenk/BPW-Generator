@@ -80,7 +80,7 @@ public class DungeonGrid : Grid
                 }
             }
         }
-        Debug.Log("Successfully generated " + rooms.Count + " room(s)");
+        Debug.Log("Generated " + rooms.Count + " Room(s)");
         if (failedRooms != 0)
         {
             Debug.Log(failedRooms + " Room(s) Failed to Generate");
@@ -90,56 +90,60 @@ public class DungeonGrid : Grid
     private void GenerateCorridors()
     {
         int failedCorridors = 0;
+        int corridorsGenerated = 0;
         for (int i = 0; i < rooms.Count; i++)
         {
-            Room closestRoom = GetClosestRoom(rooms[i]);
+            Room closestRoom = rooms[i];
 
             if (closestRoom != null)
             {
                 Vector2Int currentRoomPos = rooms[i].GetRandomPos();
                 Vector2Int closestRoomPos = closestRoom.GetRandomPos();
 
+                corridorsGenerated++;
+
                 //x-axis
-                if (closestRoomPos.x > currentRoomPos.x) //If closest room is to the right
+                if (currentRoomPos.x < closestRoomPos.x) //If closest room is to the right
                 {
                     for (int x = currentRoomPos.x; x <= closestRoomPos.x; x++)
                     {
                         SetTile(x, currentRoomPos.y, ID.pavedStone, false);
                     }
                 }
-                else
-                {
-                    for (int x = currentRoomPos.x; x >= closestRoomPos.x; x--)
-                    {
-                        SetTile(x, currentRoomPos.y, ID.pavedStone, false);
-                    }
-                }
+                //else
+                //{
+                //    for (int x = currentRoomPos.x; x >= closestRoomPos.x; x--)
+                //    {
+                //        SetTile(x, currentRoomPos.y, ID.pavedStone, false);
+                //    }
+                //}
 
-                //y-axis
-                if (closestRoomPos.y > currentRoomPos.y) //If closest room is down
-                {
-                    for (int y = currentRoomPos.y; y <= closestRoomPos.y; y++)
-                    {
-                        SetTile(currentRoomPos.x, y, ID.pavedStone, false);
-                    }
-                }
-                else
-                {
-                    for (int y = currentRoomPos.y; y >= closestRoomPos.y; y--)
-                    {
-                        SetTile(currentRoomPos.x, y, ID.pavedStone, false);
-                    }
-                }
+                ////y-axis
+                //if (closestRoomPos.y > currentRoomPos.y) //If closest room is down
+                //{
+                //    for (int y = currentRoomPos.y; y <= closestRoomPos.y; y++)
+                //    {
+                //        SetTile(currentRoomPos.x, y, ID.pavedStone, false);
+                //    }
+                //}
+                //else
+                //{
+                //    for (int y = currentRoomPos.y; y >= closestRoomPos.y; y--)
+                //    {
+                //        SetTile(currentRoomPos.x, y, ID.pavedStone, false);
+                //    }
+                //}
             }
             else
             {
                 failedCorridors++;
             }
+        }
 
-            if (failedCorridors != 0)
-            {
-                Debug.Log(failedCorridors + " Corridor(s) Failed to Generate");
-            }
+        Debug.Log("Generated " + corridorsGenerated + " Corridor(s)");
+        if (failedCorridors != 0)
+        {
+            Debug.Log(failedCorridors + " Corridor(s) Failed to Generate");
         }
     }
 
@@ -161,6 +165,11 @@ public class DungeonGrid : Grid
 
         return closestRoom;
     }
+
+    //public int CalcTileDistance(Vector2Int room1, Vector2Int room2)
+    //{
+    //    //A*
+    //}
 
     private int GetPerlinIntValue(float x, float y, ID[] tiles)
     {
