@@ -44,7 +44,7 @@ public class DungeonGrid : Grid
         {
             for (int x = 0; x < Width; x++)
             {
-                gridArray[x, y] = new Tile((ID)GetPerlinIntValue(x, y, WorldGenerationTiles));
+                gridArray[x, y] = new Tile((ID)GetPerlinIntValue(x, y, WorldGenerationTiles), new Vector2Int(x, y));
             }
         }
     }
