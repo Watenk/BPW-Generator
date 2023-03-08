@@ -26,16 +26,21 @@ public class DungeonGrid : Grid
 
     public override void OnStart()
     {
-        perlinXOffset = Random.Range(-10000, 10000);
-        perlinYOffset = Random.Range(-10000, 10000);
         rooms = new List<Room>();
         watenkLib = new WatenkLib();
         base.OnStart();
 
+        CalcPerlinOffsets();
         GenerateTerrain();
         GenerateRooms();
         GenerateCorridors();
         gridRenderer.Draw();
+    }
+
+    private void CalcPerlinOffsets()
+    {
+        perlinXOffset = Random.Range(-10000, 10000);
+        perlinYOffset = Random.Range(-10000, 10000);
     }
 
     private void GenerateTerrain()
@@ -93,21 +98,24 @@ public class DungeonGrid : Grid
         int corridorsGenerated = 0;
         for (int i = 0; i < rooms.Count; i++)
         {
-            Room closestRoom = rooms[i];
+            Room currentRoom = rooms[i];
+            Room closestRoom = GetClosestRoom(currentRoom);
 
-            if (closestRoom != null)
+            if (closestRoom != null && closestRoom != currentRoom)
             {
-                Vector2Int currentRoomPos = rooms[i].GetRandomPos();
-                Vector2Int closestRoomPos = closestRoom.GetRandomPos();
+                Vector2Int currentRoomPos = currentRoom.GetMiddle();
+                Vector2Int closestRoomPos = closestRoom.GetMiddle();
 
                 corridorsGenerated++;
 
                 //x-axis
+                Debug.Log(currentRoomPos.x + closestRoomPos.x);
                 if (currentRoomPos.x < closestRoomPos.x) //If closest room is to the right
                 {
                     for (int x = currentRoomPos.x; x <= closestRoomPos.x; x++)
                     {
                         SetTile(x, currentRoomPos.y, ID.pavedStone, false);
+                        Debug.Log("ahhhh");
                     }
                 }
                 //else
