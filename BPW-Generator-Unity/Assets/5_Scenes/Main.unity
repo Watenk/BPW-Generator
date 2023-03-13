@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -169,16 +169,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridRenderer: {fileID: 2005937976}
-  Width: 500
-  Height: 500
+  Width: 1000
+  Height: 100
   WorldGenerationTiles: 01000000020000000300000004000000
   PerlinMagnification: 40
   RoomTiles: 0300000004000000
   RoomsFloor: 5
-  RoomAmount: 400
+  RoomAmount: 200
   MinRoomSize: 5
   MaxRoomSize: 20
-  MaxRoomConnectDistance: 1000
+  MaxRoomConnectDistance: 50
   RoomAvoidEdges: 2
   RetryFailedRoomGeneration: 10000
 --- !u!1 &705507993

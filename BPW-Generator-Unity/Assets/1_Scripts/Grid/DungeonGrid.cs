@@ -23,17 +23,20 @@ public class DungeonGrid : Grid
     private List<Room> rooms; //List of rooms in map
 
     private WatenkLib watenkLib;
+    private AStar aStar;
 
     public override void OnStart()
     {
         rooms = new List<Room>();
         watenkLib = new WatenkLib();
+        aStar = new AStar();
         base.OnStart();
 
         CalcPerlinOffsets();
         GenerateTerrain();
         GenerateRooms();
         GenerateCorridors();
+        GenerateTrees();
         gridRenderer.Draw();
     }
 
@@ -85,11 +88,7 @@ public class DungeonGrid : Grid
                 }
             }
         }
-        Debug.Log("Generated " + rooms.Count + " Room(s)");
-        if (failedRooms != 0)
-        {
-            Debug.Log(failedRooms + " Room(s) Failed to Generate");
-        }
+        Debug.Log("Generated " + rooms.Count + " Room(s), " + failedRooms + " Rooms failed");
     }
 
     private void GenerateCorridors()
@@ -103,81 +102,56 @@ public class DungeonGrid : Grid
 
             if (closestRoom != null && closestRoom != currentRoom)
             {
-                Vector2Int currentRoomPos = currentRoom.GetMiddle();
-                Vector2Int closestRoomPos = closestRoom.GetMiddle();
+                Vector2Int currentRoomPos = currentRoom.GetRandomPos();
+                Vector2Int closestRoomPos = closestRoom.GetRandomPos();
+                Tile currentRoomTile = GetTile(currentRoomPos.x, currentRoomPos.y);
+                Tile closestRoomTile = GetTile(closestRoomPos.x, closestRoomPos.y);
+                List<Tile> fastestPath = aStar.CalcFastestPath(currentRoomTile, closestRoomTile, this);
 
-                corridorsGenerated++;
-
-                //x-axis
-                Debug.Log(currentRoomPos.x + closestRoomPos.x);
-                if (currentRoomPos.x < closestRoomPos.x) //If closest room is to the right
+                if (fastestPath != null)
                 {
-                    for (int x = currentRoomPos.x; x <= closestRoomPos.x; x++)
+                    for (int j = 0; j < fastestPath.Count; j++)
                     {
-                        SetTile(x, currentRoomPos.y, ID.pavedStone, false);
-                        Debug.Log("ahhhh");
+                        Vector2Int currentTilePos = fastestPath[j].GetPos();
+                        SetTile(currentTilePos.x, currentTilePos.y, ID.pavedStone, false);
                     }
+                    corridorsGenerated++;
                 }
-                //else
-                //{
-                //    for (int x = currentRoomPos.x; x >= closestRoomPos.x; x--)
-                //    {
-                //        SetTile(x, currentRoomPos.y, ID.pavedStone, false);
-                //    }
-                //}
-
-                ////y-axis
-                //if (closestRoomPos.y > currentRoomPos.y) //If closest room is down
-                //{
-                //    for (int y = currentRoomPos.y; y <= closestRoomPos.y; y++)
-                //    {
-                //        SetTile(currentRoomPos.x, y, ID.pavedStone, false);
-                //    }
-                //}
-                //else
-                //{
-                //    for (int y = currentRoomPos.y; y >= closestRoomPos.y; y--)
-                //    {
-                //        SetTile(currentRoomPos.x, y, ID.pavedStone, false);
-                //    }
-                //}
+                else
+                {
+                    failedCorridors++;
+                }
             }
             else
             {
                 failedCorridors++;
             }
         }
+        Debug.Log("Generated " + corridorsGenerated + " Corridor(s), " + failedCorridors + " Corridors failed");
+    }
 
-        Debug.Log("Generated " + corridorsGenerated + " Corridor(s)");
-        if (failedCorridors != 0)
-        {
-            Debug.Log(failedCorridors + " Corridor(s) Failed to Generate");
-        }
+    private void GenerateTrees()
+    {
+
     }
 
     public Room GetClosestRoom(Room room)
     {
-        Vector2Int currentRoomPos = room.GetRandomPos();
+        Vector2Int currentRoomPos = room.GetMiddle();
         Room closestRoom = null;
         int closestDistance = MaxRoomConnectDistance;
 
         for (int i = 0; i < rooms.Count; i++)
         {
-            int currentDistance = (int)Vector2Int.Distance(currentRoomPos, rooms[i].GetRandomPos());
-            if (currentDistance < closestDistance)
+            int currentDistance = (int)Vector2Int.Distance(currentRoomPos, rooms[i].GetMiddle());
+            if (currentDistance < closestDistance && rooms[i] != room)
             {
                 closestDistance = currentDistance;
                 closestRoom = rooms[i];
             }
         }
-
         return closestRoom;
     }
-
-    //public int CalcTileDistance(Vector2Int room1, Vector2Int room2)
-    //{
-    //    //A*
-    //}
 
     private int GetPerlinIntValue(float x, float y, ID[] tiles)
     {

@@ -6,59 +6,81 @@ using System.Linq;
 public class AStar
 {
     //A self-written attempt at AStar
+
+    //Need to add randomness
+
     public List<Tile> CalcFastestPath(Tile startTile, Tile targetTile, Grid grid)
     {
-        Dictionary<Tile, int> gCost = new Dictionary<Tile, int>(); //G-Cost is distance from start
-        Dictionary<Tile, int> hCost = new Dictionary<Tile, int>(); ; //H-Cost is distance from target
         Dictionary<Tile, int> fCost = new Dictionary<Tile, int>(); //Tiles with calculated fCost
         Dictionary<Tile, Tile> parent = new Dictionary<Tile, Tile>(); //Parent of tile
-        List<Tile> calcedTiles = new List<Tile>(); //Already calculated tiles
-        List<Tile> pendingTiles = new List<Tile>(); //Tiles to explore
-        List<Tile> path = new List<Tile>(); //List of tiles with fastest path
+        List<Tile> pendingTiles = new List<Tile>();
+        List<Tile> fastestPath = new List<Tile>(); //List of tiles with fastest path
 
         Tile currentTile = startTile;
 
-        //Calc all low fCosts until targetTile
+        //Calc all lowest fCosts until targetTile
         while (currentTile != targetTile)
         {
-            CalcSurroundingTiles(currentTile, startTile, targetTile, gCost, hCost, fCost, grid, parent, calcedTiles);
-            currentTile = GetLowestFCost(fCost);
+            CalcSurroundingTiles(currentTile, targetTile, startTile, fCost, pendingTiles, grid, parent);
+            currentTile = GetLowestPending(pendingTiles, fCost);
+            if (currentTile == null) { return null; } //Return null if cant reach target
         }
 
-        //Retrace fastest path from targetTile
+        //Retrace fastest path from targetTile to startTile
+        while (currentTile != startTile)
+        {
+            fastestPath.Add(currentTile);
+            parent.TryGetValue(currentTile, out Tile newTile);
+            currentTile = newTile;
+        }
 
-
-        return path;
+        fastestPath.Reverse();
+        return fastestPath;
     }
 
-    private Tile GetLowestFCost(Dictionary<Tile, int> fCost)
+    private Tile GetLowestPending(List<Tile> pendingTiles, Dictionary<Tile, int> fCost)
     {
-        return fCost.Aggregate((x, y) => x.Value < y.Value ? x : y).Key; // x and y are the key and the value from the dictionary
+        int lowestValue = 100000;
+        Tile currentTile = null;
+
+        for (int i = 0; i < pendingTiles.Count; i++)
+        {
+            fCost.TryGetValue(pendingTiles[i], out int value);
+            if (value < lowestValue)
+            {
+                lowestValue = value;
+                currentTile = pendingTiles[i];
+            }
+        }
+
+        return currentTile;
     }
 
-    private void CalcSurroundingTiles(Tile currentTile, Tile startTile, Tile targetTile, Dictionary<Tile, int> gCost, Dictionary<Tile, int> hCost, Dictionary<Tile, int> fCost, Grid grid, Dictionary<Tile, Tile> parent, List<Tile> calcedTiles)
+    private void CalcSurroundingTiles(Tile currentTile, Tile targetTile, Tile startTile, Dictionary<Tile, int> fCost, List<Tile> pendingTiles, Grid grid, Dictionary<Tile, Tile> parent)
     {
         Vector2Int currentTilePos = currentTile.GetPos();
         //up
         Tile upTile = grid.GetTile(currentTilePos.x, currentTilePos.y - 1);
-        CalcTileCost(upTile, startTile, targetTile, currentTile, gCost, hCost, fCost, parent, calcedTiles);
+        CalcTileCost(upTile, currentTile, targetTile, startTile, fCost, pendingTiles, parent);
 
         //right
         Tile rightTile = grid.GetTile(currentTilePos.x + 1, currentTilePos.y);
-        CalcTileCost(rightTile, startTile, targetTile, currentTile, gCost, hCost, fCost, parent, calcedTiles);
+        CalcTileCost(rightTile, currentTile, targetTile, startTile, fCost, pendingTiles, parent);
 
         //down
         Tile downTile = grid.GetTile(currentTilePos.x, currentTilePos.y + 1);
-        CalcTileCost(downTile, startTile, targetTile, currentTile, gCost, hCost, fCost, parent, calcedTiles);
+        CalcTileCost(downTile, currentTile, targetTile, startTile, fCost, pendingTiles, parent);
 
         //left
         Tile leftTile = grid.GetTile(currentTilePos.x - 1, currentTilePos.y);
-        CalcTileCost(leftTile, startTile, targetTile, currentTile, gCost, hCost, fCost, parent, calcedTiles);
+        CalcTileCost(leftTile, currentTile, targetTile, startTile, fCost, pendingTiles, parent);
+
+        pendingTiles.Remove(currentTile);
     }
 
-    private void CalcTileCost(Tile currentTile, Tile startTile, Tile targetTile, Tile parentTile, Dictionary<Tile, int> gCost, Dictionary<Tile, int> hCost, Dictionary<Tile, int> fCost, Dictionary<Tile, Tile> parent, List<Tile> calcedTiles)
+    private void CalcTileCost(Tile currentTile, Tile parentTile, Tile targetTile, Tile startTile, Dictionary<Tile, int> fCost, List<Tile> pendingTiles, Dictionary<Tile, Tile> parent)
     {
-        if (!calcedTiles.Contains(currentTile))
+        if (!fCost.ContainsKey(currentTile)) //if value is not calculated
         {
             Vector2Int currentTilePos = currentTile.GetPos();
             Vector2Int startTilePos = startTile.GetPos();
@@ -68,19 +90,18 @@ public class AStar
             int xDifferenceGCost = Mathf.Abs(currentTilePos.x - startTilePos.x);
             int yDifferenceGCost = Mathf.Abs(currentTilePos.y - startTilePos.y);
             int gCostInt = xDifferenceGCost + yDifferenceGCost;
-            gCost.Add(currentTile, gCostInt);
 
             //CalcHCost
             int xDifferenceHCost = Mathf.Abs(currentTilePos.x - targetTilePos.x);
             int yDifferenceHCost = Mathf.Abs(currentTilePos.y - targetTilePos.y);
             int hCostInt = xDifferenceHCost + yDifferenceHCost;
-            hCost.Add(currentTile, hCostInt);
 
             //CalcFCost
             int fCostInt = gCostInt + hCostInt;
-            fCost.Add(currentTile, fCostInt);
 
+            fCost.Add(currentTile, fCostInt);
             parent.Add(currentTile, parentTile);
+            pendingTiles.Add(currentTile);
         }
     }
 }
