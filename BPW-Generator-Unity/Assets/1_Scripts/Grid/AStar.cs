@@ -7,9 +7,7 @@ public class AStar
 {
     //A self-written attempt at AStar
 
-    //Need to add randomness
-
-    public List<Tile> CalcFastestPath(Tile startTile, Tile targetTile, Grid grid)
+    public List<Tile> CalcPath(Tile startTile, Tile targetTile, Grid grid)
     {
         Dictionary<Tile, int> fCost = new Dictionary<Tile, int>(); //Tiles with calculated fCost
         Dictionary<Tile, Tile> parent = new Dictionary<Tile, Tile>(); //Parent of tile
@@ -50,6 +48,14 @@ public class AStar
             {
                 lowestValue = value;
                 currentTile = pendingTiles[i];
+            }
+            else if (value == lowestValue)
+            {
+                int randomInt = Random.Range(0, 100);
+                if (randomInt >= 50)
+                {
+                    currentTile = pendingTiles[i];
+                }
             }
         }
 

@@ -2,45 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inputs : BaseClass
+public class CamController : BaseClass
 {
-    public Grid Grid;
     public float ScrollSpeed;
     public int minCamSize;
     public int maxCamSize;
 
+    private InputManager inputManager;
     private Vector2 referenceMousePos;
-    private WatenkLib watenkLib;
 
     public override void OnAwake()
     {
-        watenkLib = new WatenkLib();
+        inputManager = FindObjectOfType<InputManager>();
     }
 
     public override void OnUpdate()
     {
-        //Mouse ---------------------------------------------------------
-        if (Input.GetMouseButton(0))
-        {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            watenkLib.ConvertMouseToInts(mousePos, out int mouseXInt, out int mouseYInt);
-            Grid.SetTile(mouseXInt, -mouseYInt, ID.water, true);
-        }
+        CheckInputs();
+    }
 
-        if (Input.GetMouseButton(1))
-        {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            watenkLib.ConvertMouseToInts(mousePos, out int mouseXInt, out int mouseYInt);
-            Grid.SetTile(mouseXInt, -mouseYInt, ID.grass, true);
-        }
-
-        if (Input.GetMouseButtonDown(2))
+    private void CheckInputs()
+    {
+        if (inputManager.MiddleMouseDown == true)
         {
             referenceMousePos = Input.mousePosition;
             referenceMousePos = Camera.main.ScreenToWorldPoint(referenceMousePos);
         }
 
-        if (Input.GetMouseButton(2))
+        if (inputManager.MiddleMouse == true)
         {
             //Get mousepos and calc newPos
             Vector2 currentMousePos = Input.mousePosition;
@@ -55,12 +44,12 @@ public class Inputs : BaseClass
             Camera.main.transform.position = newPos;
         }
 
-        if (Input.mouseScrollDelta.y > 0f && Camera.main.orthographicSize > minCamSize && Input.GetMouseButton(2) == false) //Scroll up
+        if (inputManager.ScrollMouseDelta > 0f && Camera.main.orthographicSize > minCamSize && Input.GetMouseButton(2) == false) //Scroll up
         {
             Camera.main.orthographicSize -= Camera.main.orthographicSize * ScrollSpeed * 0.01f;
         }
 
-        if (Input.mouseScrollDelta.y < 0f && Camera.main.orthographicSize < maxCamSize && Input.GetMouseButton(2) == false) //Scroll down
+        if (inputManager.ScrollMouseDelta < 0f && Camera.main.orthographicSize < maxCamSize && Input.GetMouseButton(2) == false) //Scroll down
         {
             Camera.main.orthographicSize += Camera.main.orthographicSize * ScrollSpeed * 0.01f;
         }

@@ -36,7 +36,8 @@ public class DungeonGrid : Grid
         GenerateTerrain();
         GenerateRooms();
         GenerateCorridors();
-        GenerateTrees();
+        SpawnObjects();
+        SpawnEntities();
         gridRenderer.Draw();
     }
 
@@ -44,6 +45,16 @@ public class DungeonGrid : Grid
     {
         perlinXOffset = Random.Range(-10000, 10000);
         perlinYOffset = Random.Range(-10000, 10000);
+    }
+
+    private void SpawnEntities()
+    {
+        //Instantiate player
+    }
+
+    private void SpawnObjects()
+    {
+        //Need to implement
     }
 
     private void GenerateTerrain()
@@ -106,7 +117,7 @@ public class DungeonGrid : Grid
                 Vector2Int closestRoomPos = closestRoom.GetRandomPos();
                 Tile currentRoomTile = GetTile(currentRoomPos.x, currentRoomPos.y);
                 Tile closestRoomTile = GetTile(closestRoomPos.x, closestRoomPos.y);
-                List<Tile> fastestPath = aStar.CalcFastestPath(currentRoomTile, closestRoomTile, this);
+                List<Tile> fastestPath = aStar.CalcPath(currentRoomTile, closestRoomTile, this);
 
                 if (fastestPath != null)
                 {
@@ -128,11 +139,6 @@ public class DungeonGrid : Grid
             }
         }
         Debug.Log("Generated " + corridorsGenerated + " Corridor(s), " + failedCorridors + " Corridors failed");
-    }
-
-    private void GenerateTrees()
-    {
-
     }
 
     public Room GetClosestRoom(Room room)

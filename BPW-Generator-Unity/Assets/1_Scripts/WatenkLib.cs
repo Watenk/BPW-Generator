@@ -28,21 +28,21 @@ public class WatenkLib
 
 public class FSM
 {
-    Dictionary<System.Type, BaseState> StatesDictionary = new Dictionary<System.Type, BaseState>(); // Dictionary for States - String is the key
+    public Dictionary<System.Type, BaseState> States = new Dictionary<System.Type, BaseState>(); 
     public BaseState currentState;
 
-    public FSM(params BaseState[] states)
+    public FSM(BaseState[] states)
     {
         foreach (BaseState state in states)
         {
             state.SetOwner(this);
-            StatesDictionary.Add(state.GetType(), state);
+            States.Add(state.GetType(), state);
         }
     }
     public void SwitchState(System.Type newState)
     {
         currentState?.OnExit();
-        currentState = StatesDictionary[newState];
+        currentState = States[newState];
         currentState?.OnStart();
     }
 
@@ -60,15 +60,9 @@ public class FSM
 public abstract class BaseState : MonoBehaviour
 {
     protected FSM owner;
-    public void SetOwner(FSM owner)
-    {
-        this.owner = owner;
-    }
-    public virtual void OnAwake()
-    {
-
-    }
-    public abstract void OnStart();
-    public abstract void OnUpdate();
-    public abstract void OnExit();
+    public void SetOwner(FSM owner) { this.owner = owner; }
+    public virtual void OnAwake() { }
+    public virtual void OnStart() { }
+    public virtual void OnUpdate() { }
+    public virtual void OnExit() { }
 }
