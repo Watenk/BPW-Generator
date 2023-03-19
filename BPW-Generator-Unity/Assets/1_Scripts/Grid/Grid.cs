@@ -56,12 +56,12 @@ public class Grid : BaseClassLate
         }
     }
 
-    public bool IsTileAvailible(int x, int y, ID[] allowedIDs)
+    public bool IsTileAvailible(int x, int y, List<ID> allowedIDs)
     {
         if (GetTile(x, y) == null) { return false; }
 
         ID currentTileID = GetTile(x, y).GetID();
-        for (int i = 0; i < allowedIDs.Length; i++)
+        for (int i = 0; i < allowedIDs.Count; i++)
         {
             if (currentTileID == allowedIDs[i])
             {
@@ -72,7 +72,7 @@ public class Grid : BaseClassLate
         return false;
     }
 
-    public bool AreTilesAvailible(int x1, int y1, int x2, int y2, ID[] allowedIDs)
+    public bool AreTilesAvailible(int x1, int y1, int x2, int y2, List<ID> allowedIDs)
     {
         if (IsInGridBounds(x1, y1) && IsInGridBounds(x2, y2))
         {
@@ -89,6 +89,30 @@ public class Grid : BaseClassLate
             return true;
         }
         return false;
+    }
+
+    public Tile FindRandomFreeSpace(int x1, int y1, int x2, int y2, List<ID> allowedIDs)
+    {
+        if (IsInGridBounds(x1, y1) && IsInGridBounds(x2, y2))
+        {
+            int retrys = 0;
+            retry:
+            int x = Random.Range(x1, x2);
+            int y = Random.Range(y1, y2);
+
+            if (IsTileAvailible(x, y, allowedIDs))
+            {
+                return GetTile(x, y);
+            }
+
+            retrys++;
+            if (retrys > 100)
+            {
+                return null;
+            }
+            goto retry;
+        }
+        return null;
     }
 
     public bool IsInGridBounds(int x, int y)

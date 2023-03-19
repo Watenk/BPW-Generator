@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DungeonGrid : Grid
@@ -9,7 +10,8 @@ public class DungeonGrid : Grid
     public ID[] WorldGenerationTiles = new ID[1]; //What tiles are used for generation
     public float PerlinMagnification; //The higher the bigger the tileCollections
     //Rooms
-    public ID[] RoomTiles = new ID[1]; //Tiles where rooms can generate on
+    public List <ID> RoomTiles = new List<ID>(); //Tiles where rooms can generate on
+    public List<ID> walkableTiles = new List<ID>(); //Tiles where entities can move to/on
     public ID RoomsFloor;
     public int RoomAmount;
     public int MinRoomSize;
@@ -17,11 +19,15 @@ public class DungeonGrid : Grid
     public int MaxRoomConnectDistance; //Max distance a room will search for another room to connect to
     public int RoomAvoidEdges; //Amount of tiles room will not generate from edge RoomTiles
     public int RetryFailedRoomGeneration; //Amount of times a room will trt to regenerate
+    public int PlayerSpawnRadius; //Radius around 0, 0 the player can spawn
 
+    private List<Room> rooms; //List of rooms in map
     private float perlinXOffset;
     private float perlinYOffset;
-    private List<Room> rooms; //List of rooms in map
 
+    //References
+    public GameObject PlayerPrefab;
+    private Player player;
     private WatenkLib watenkLib;
     private AStar aStar;
 
@@ -47,14 +53,18 @@ public class DungeonGrid : Grid
         perlinYOffset = Random.Range(-10000, 10000);
     }
 
-    private void SpawnEntities()
-    {
-        //Instantiate player
-    }
 
     private void SpawnObjects()
     {
         //Need to implement
+    }
+
+    private void SpawnEntities()
+    {
+        //Player
+        player = Instantiate(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Player>();
+        Vector2Int spawnPos = FindRandomFreeSpace(0, 0, PlayerSpawnRadius, PlayerSpawnRadius, walkableTiles).GetPos();
+        player.SetPos(spawnPos);
     }
 
     private void GenerateTerrain()

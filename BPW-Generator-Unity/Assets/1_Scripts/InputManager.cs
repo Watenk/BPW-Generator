@@ -8,6 +8,7 @@ public class InputManager : BaseClass
     public bool D;
     public bool S;
     public bool A;
+    public bool F;
     public bool LeftMouse;
     public bool RightMouse;
     public bool MiddleMouse;
@@ -24,6 +25,7 @@ public class InputManager : BaseClass
         D = Input.GetKeyDown(KeyCode.D);
         S = Input.GetKeyDown(KeyCode.S);
         A = Input.GetKeyDown(KeyCode.A);
+        F = Input.GetKeyDown(KeyCode.F);
         LeftMouse = Input.GetKey(KeyCode.Mouse0);
         RightMouse = Input.GetKey(KeyCode.Mouse1);
         MiddleMouse = Input.GetKey(KeyCode.Mouse2);
