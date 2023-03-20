@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grid : BaseClassLate
+public class TileGrid : BaseClassLate
 {
-    public GridRenderer gridRenderer;
-    public int Width; //Wouldn't recommend anything above 500
+    public TileGridRenderer gridRenderer;
+    public int Width; //Wouldn't recommend anything above 250k tiles
     public int Height;
 
     protected Tile[,] gridArray;

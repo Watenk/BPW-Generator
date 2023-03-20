@@ -7,7 +7,7 @@ public class AStar
 {
     //A self-written attempt at AStar
 
-    public List<Tile> CalcPath(Tile startTile, Tile targetTile, Grid grid)
+    public List<Tile> CalcPath(Tile startTile, Tile targetTile, TileGrid grid)
     {
         Dictionary<Tile, int> fCost = new Dictionary<Tile, int>(); //Tiles with calculated fCost
         Dictionary<Tile, Tile> parent = new Dictionary<Tile, Tile>(); //Parent of tile
@@ -62,7 +62,7 @@ public class AStar
         return currentTile;
     }
 
-    private void CalcSurroundingTiles(Tile currentTile, Tile targetTile, Tile startTile, Dictionary<Tile, int> fCost, List<Tile> pendingTiles, Grid grid, Dictionary<Tile, Tile> parent)
+    private void CalcSurroundingTiles(Tile currentTile, Tile targetTile, Tile startTile, Dictionary<Tile, int> fCost, List<Tile> pendingTiles, TileGrid grid, Dictionary<Tile, Tile> parent)
     {
         Vector2Int currentTilePos = currentTile.GetPos();
         //up

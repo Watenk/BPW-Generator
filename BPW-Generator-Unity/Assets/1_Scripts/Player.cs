@@ -10,9 +10,11 @@ public class Player : Alive
     private Vector2Int left = new Vector2Int(-1, 0);
 
     private InputManager inputManager;
+    private DungeonGrid dungeonGrid;
 
     public override void OnAwake()
     {
+        dungeonGrid = FindObjectOfType<DungeonGrid>();
         inputManager = FindObjectOfType<InputManager>();
     }
 
@@ -48,6 +50,9 @@ public class Player : Alive
     {
         Vector2Int currentPos = GetPos();
         Vector2Int newPos = new Vector2Int(currentPos.x + direction.x, currentPos.y + direction.y);
-        SetPos(newPos);
+        if (dungeonGrid.IsTileAvailible(newPos.x, newPos.y, dungeonGrid.walkableTiles))
+        {
+            SetPos(newPos);
+        }
     }
 }

@@ -2,26 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CamController : BaseClass
+public class Inputs : BaseClass
 {
     public float ScrollSpeed;
     public int minCamSize;
     public int maxCamSize;
-
-    private InputManager inputManager;
+    
     private Vector2 referenceMousePos;
+
+    //references
+    private DungeonGrid dungeonGrid;
+    private InputManager inputManager;
 
     public override void OnAwake()
     {
+        dungeonGrid = FindObjectOfType<DungeonGrid>();
         inputManager = FindObjectOfType<InputManager>();
     }
 
     public override void OnUpdate()
     {
-        CheckInputs();
+        CameraInput();
     }
 
-    private void CheckInputs()
+    private void CameraInput()
     {
         if (inputManager.MiddleMouseDown == true)
         {
@@ -44,14 +48,29 @@ public class CamController : BaseClass
             Camera.main.transform.position = newPos;
         }
 
-        if (inputManager.ScrollMouseDelta > 0f && Camera.main.orthographicSize > minCamSize && Input.GetMouseButton(2) == false) //Scroll up
+        //Scroll up
+        if (inputManager.ScrollMouseDelta > 0f && Camera.main.orthographicSize > minCamSize && Input.GetMouseButton(2) == false)
         {
             Camera.main.orthographicSize -= Camera.main.orthographicSize * ScrollSpeed * 0.01f;
         }
 
-        if (inputManager.ScrollMouseDelta < 0f && Camera.main.orthographicSize < maxCamSize && Input.GetMouseButton(2) == false) //Scroll down
+        //Scroll down
+        if (inputManager.ScrollMouseDelta < 0f && Camera.main.orthographicSize < maxCamSize && Input.GetMouseButton(2) == false)
         {
             Camera.main.orthographicSize += Camera.main.orthographicSize * ScrollSpeed * 0.01f;
         }
+
+        //Player Focus
+        if (inputManager.F)
+        {
+            FocusOnPlayer();
+        }
+    }
+
+    public void FocusOnPlayer()
+    {
+        Vector2Int playerPos = dungeonGrid.GetEntity(1).GetPos();
+        Camera.main.transform.position = new Vector3(playerPos.x, -playerPos.y, -10);
+        Camera.main.orthographicSize = 5;
     }
 }

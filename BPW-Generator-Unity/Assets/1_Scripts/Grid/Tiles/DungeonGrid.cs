@@ -4,7 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class DungeonGrid : Grid
+public class DungeonGrid : TileGrid
 {
     //Terrain
     public ID[] WorldGenerationTiles = new ID[1]; //What tiles are used for generation
@@ -21,19 +21,26 @@ public class DungeonGrid : Grid
     public int RetryFailedRoomGeneration; //Amount of times a room will trt to regenerate
     public int PlayerSpawnRadius; //Radius around 0, 0 the player can spawn
 
-    private List<Room> rooms; //List of rooms in map
+    private List<Alive> entitys = new List<Alive>();
+    private List<Room> rooms = new List<Room>(); //List of rooms in map
     private float perlinXOffset;
     private float perlinYOffset;
 
     //References
     public GameObject PlayerPrefab;
-    private Player player;
+    private GameManager gameManager;
+    private Inputs inputs;
     private WatenkLib watenkLib;
     private AStar aStar;
 
+    public override void OnAwake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+        inputs = FindObjectOfType<Inputs>();
+    }
+
     public override void OnStart()
     {
-        rooms = new List<Room>();
         watenkLib = new WatenkLib();
         aStar = new AStar();
         base.OnStart();
@@ -47,12 +54,50 @@ public class DungeonGrid : Grid
         gridRenderer.Draw();
     }
 
+    public Alive GetEntity(int ID)
+    {
+        for (int i = 0; i < entitys.Count; i++)
+        {
+            if (entitys[i].GetID() == ID)
+            {
+                return entitys[i];
+            }
+        }
+        return null;
+    }
+
+    private void AddEntity(GameObject prefab, Vector2Int pos, int ID)
+    {
+        Alive currentEntity = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Player>();
+        gameManager.AddObject(currentEntity);
+        entitys.Add(currentEntity);
+        currentEntity.SetID(ID);
+        currentEntity.SetPos(pos);
+    }
+
+    private Room GetClosestRoom(Room room)
+    {
+        Vector2Int currentRoomPos = room.GetMiddle();
+        Room closestRoom = null;
+        int closestDistance = MaxRoomConnectDistance;
+
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            int currentDistance = (int)Vector2Int.Distance(currentRoomPos, rooms[i].GetMiddle());
+            if (currentDistance < closestDistance && rooms[i] != room)
+            {
+                closestDistance = currentDistance;
+                closestRoom = rooms[i];
+            }
+        }
+        return closestRoom;
+    }
+
     private void CalcPerlinOffsets()
     {
         perlinXOffset = Random.Range(-10000, 10000);
         perlinYOffset = Random.Range(-10000, 10000);
     }
-
 
     private void SpawnObjects()
     {
@@ -61,10 +106,9 @@ public class DungeonGrid : Grid
 
     private void SpawnEntities()
     {
-        //Player
-        player = Instantiate(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Player>();
         Vector2Int spawnPos = FindRandomFreeSpace(0, 0, PlayerSpawnRadius, PlayerSpawnRadius, walkableTiles).GetPos();
-        player.SetPos(spawnPos);
+        AddEntity(PlayerPrefab, spawnPos, 1);
+        inputs.FocusOnPlayer();
     }
 
     private void GenerateTerrain()
@@ -149,24 +193,6 @@ public class DungeonGrid : Grid
             }
         }
         Debug.Log("Generated " + corridorsGenerated + " Corridor(s), " + failedCorridors + " Corridors failed");
-    }
-
-    public Room GetClosestRoom(Room room)
-    {
-        Vector2Int currentRoomPos = room.GetMiddle();
-        Room closestRoom = null;
-        int closestDistance = MaxRoomConnectDistance;
-
-        for (int i = 0; i < rooms.Count; i++)
-        {
-            int currentDistance = (int)Vector2Int.Distance(currentRoomPos, rooms[i].GetMiddle());
-            if (currentDistance < closestDistance && rooms[i] != room)
-            {
-                closestDistance = currentDistance;
-                closestRoom = rooms[i];
-            }
-        }
-        return closestRoom;
     }
 
     private int GetPerlinIntValue(float x, float y, ID[] tiles)

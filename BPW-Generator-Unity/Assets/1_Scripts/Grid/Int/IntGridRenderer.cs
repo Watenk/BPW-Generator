@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridRenderer : BaseClass
+public class IntGridRenderer : BaseClass
 {
-    public Grid Grid;
+    public IntGrid Grid;
     public int TileAmount;
     public float TexturePixelWidth;
     public float UVFloatErrorMargin;
@@ -68,13 +68,13 @@ public class GridRenderer : BaseClass
     private void GenerateQuads()
     {
         int i = 0;
-        for (int y = 0; y < Grid.Height; y++)
+        for (int y = 0; y < Grid.height; y++)
         {
-            for (int x = 0; x < Grid.Width; x++)
+            for (int x = 0; x < Grid.width; x++)
             {
-                int currentTileID = (int)Grid.GetTile(x, y).GetID();
+                int currentTileValue = Grid.GetTile(x, y).GetValue();
 
-                if (currentTileID != (int)ID.none)
+                if (currentTileValue != 0)
                 {
                     //Generate quads
                     //Vertices
@@ -94,10 +94,10 @@ public class GridRenderer : BaseClass
                     triangles[trianglesIndex + 5] = verticesAndUvIndex + 3;
 
                     //Map values to uv
-                    uv[verticesAndUvIndex + 1] = new Vector2(uv00[currentTileID].x, uv00[currentTileID].y);
-                    uv[verticesAndUvIndex + 2] = new Vector2(uv11[currentTileID].x, uv00[currentTileID].y);
-                    uv[verticesAndUvIndex + 0] = new Vector2(uv00[currentTileID].x, uv11[currentTileID].y);
-                    uv[verticesAndUvIndex + 3] = new Vector2(uv11[currentTileID].x, uv11[currentTileID].y);
+                    uv[verticesAndUvIndex + 1] = new Vector2(uv00[currentTileValue].x, uv00[currentTileValue].y);
+                    uv[verticesAndUvIndex + 2] = new Vector2(uv11[currentTileValue].x, uv00[currentTileValue].y);
+                    uv[verticesAndUvIndex + 0] = new Vector2(uv00[currentTileValue].x, uv11[currentTileValue].y);
+                    uv[verticesAndUvIndex + 3] = new Vector2(uv11[currentTileValue].x, uv11[currentTileValue].y);
                 }
                 i++;
             }
@@ -106,7 +106,7 @@ public class GridRenderer : BaseClass
 
     private void GenerateQuadCollections()
     {
-        int quadAmount = Grid.Width * Grid.Height;
+        int quadAmount = Grid.width * Grid.height;
         vertices = new Vector3[4 * quadAmount];
         uv = new Vector2[4 * quadAmount];
         triangles = new int[6 * quadAmount];
