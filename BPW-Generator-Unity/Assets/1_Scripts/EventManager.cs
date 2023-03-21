@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class EventManager : BaseClass
 {
-    //public delegate void NextTurn();
-    //public static event NextTurn OnNextTurn;
+    public delegate void NextTurn();
+    public static event NextTurn OnNextTurn;
 
-    public override void OnAwake()
+    public void TriggerNextTurn()
     {
-
-    }
-
-    public override void OnUpdate()
-    {
-
+        OnNextTurn();
     }
 }

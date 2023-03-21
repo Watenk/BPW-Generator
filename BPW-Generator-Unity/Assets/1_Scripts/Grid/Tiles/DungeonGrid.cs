@@ -6,10 +6,11 @@ using UnityEngine;
 
 public class DungeonGrid : TileGrid
 {
-    //Terrain
+    [Header("Terrain")]
     public ID[] WorldGenerationTiles = new ID[1]; //What tiles are used for generation
     public float PerlinMagnification; //The higher the bigger the tileCollections
-    //Rooms
+
+    [Header("Rooms")]
     public List <ID> RoomTiles = new List<ID>(); //Tiles where rooms can generate on
     public List<ID> walkableTiles = new List<ID>(); //Tiles where entities can move to/on
     public ID RoomsFloor;
@@ -19,15 +20,23 @@ public class DungeonGrid : TileGrid
     public int MaxRoomConnectDistance; //Max distance a room will search for another room to connect to
     public int RoomAvoidEdges; //Amount of tiles room will not generate from edge RoomTiles
     public int RetryFailedRoomGeneration; //Amount of times a room will trt to regenerate
+
+    [Header("Entities")]
     public int PlayerSpawnRadius; //Radius around 0, 0 the player can spawn
+    public int EnemySpawnChance; //Percentage a enemy will spawn
+    public int EnemyMaxSpawnAmount; //Max amount of enemys per room
+
+    [Header("Prefabs")]
+    public GameObject PlayerPrefab;
+    public GameObject EnemyPrefab;
 
     private List<Alive> entitys = new List<Alive>();
     private List<Room> rooms = new List<Room>(); //List of rooms in map
     private float perlinXOffset;
     private float perlinYOffset;
+    private int nextEntityID;
 
     //References
-    public GameObject PlayerPrefab;
     private GameManager gameManager;
     private Inputs inputs;
     private WatenkLib watenkLib;
@@ -66,12 +75,65 @@ public class DungeonGrid : TileGrid
         return null;
     }
 
-    private void AddEntity(GameObject prefab, Vector2Int pos, int ID)
+    public Alive GetEntity(Vector2Int pos)
     {
-        Alive currentEntity = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Player>();
+        for (int i = 0; i < entitys.Count; i++)
+        {
+            if (entitys[i].GetPos() == pos)
+            {
+                return entitys[i];
+            }
+        }
+        return null;
+    }
+
+    private void SpawnObjects()
+    {
+        //Need to implement
+    }
+
+    private void SpawnEntities()
+    {
+        //Player
+        List<ID> playerSpawnTiles = new List<ID>() { ID.grass };
+        Vector2Int playerSpawnPos = FindRandomFreeSpace(0, 0, PlayerSpawnRadius, PlayerSpawnRadius, playerSpawnTiles).GetPos();
+        AddEntity(PlayerPrefab, playerSpawnPos);
+        inputs.FocusOnPlayer();
+
+        //Enemy's
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            int spawnPercentage = Random.Range(1, 100);
+            if (spawnPercentage <= EnemySpawnChance)
+            {
+                Room currentRoom = rooms[i];
+                
+                int enemyAmount = Random.Range(1, EnemyMaxSpawnAmount);
+                
+                for (int j = 0; j < enemyAmount; j++)
+                {
+                    retry:
+                    Vector2Int currentEnemySpawnPos = currentRoom.GetRandomPos();
+                    if (GetEntity(currentEnemySpawnPos) == null)
+                    {
+                        AddEntity(EnemyPrefab, currentEnemySpawnPos);   
+                    }
+                    else
+                    {
+                        goto retry;
+                    }
+                }
+            }
+        }
+    }
+
+    private void AddEntity(GameObject prefab, Vector2Int pos)
+    {
+        Alive currentEntity = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Alive>();
         gameManager.AddObject(currentEntity);
         entitys.Add(currentEntity);
-        currentEntity.SetID(ID);
+        currentEntity.SetID(nextEntityID);
+        nextEntityID++;
         currentEntity.SetPos(pos);
     }
 
@@ -93,23 +155,17 @@ public class DungeonGrid : TileGrid
         return closestRoom;
     }
 
+    private Room GetRandomRoom()
+    {
+        return rooms[Random.Range(0, rooms.Count)];
+    }
+
     private void CalcPerlinOffsets()
     {
         perlinXOffset = Random.Range(-10000, 10000);
         perlinYOffset = Random.Range(-10000, 10000);
     }
 
-    private void SpawnObjects()
-    {
-        //Need to implement
-    }
-
-    private void SpawnEntities()
-    {
-        Vector2Int spawnPos = FindRandomFreeSpace(0, 0, PlayerSpawnRadius, PlayerSpawnRadius, walkableTiles).GetPos();
-        AddEntity(PlayerPrefab, spawnPos, 1);
-        inputs.FocusOnPlayer();
-    }
 
     private void GenerateTerrain()
     {

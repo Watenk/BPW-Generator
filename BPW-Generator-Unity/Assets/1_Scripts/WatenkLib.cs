@@ -43,6 +43,7 @@ public class FSM
     {
         currentState?.OnExit();
         currentState = States[newState];
+        currentState?.OnAwake();
         currentState?.OnStart();
     }
 

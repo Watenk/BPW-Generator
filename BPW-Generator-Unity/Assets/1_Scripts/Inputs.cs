@@ -69,7 +69,7 @@ public class Inputs : BaseClass
 
     public void FocusOnPlayer()
     {
-        Vector2Int playerPos = dungeonGrid.GetEntity(1).GetPos();
+        Vector2Int playerPos = dungeonGrid.GetEntity(0).GetPos();
         Camera.main.transform.position = new Vector3(playerPos.x, -playerPos.y, -10);
         Camera.main.orthographicSize = 5;
     }

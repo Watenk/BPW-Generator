@@ -4,23 +4,31 @@ using UnityEngine;
 
 public class Player : Alive
 {
-    private Vector2Int up = new Vector2Int(0, -1);
-    private Vector2Int right = new Vector2Int(1, 0);
-    private Vector2Int down = new Vector2Int(0, 1);
-    private Vector2Int left = new Vector2Int(-1, 0);
+    private int movesLeft;
+    private bool inputsLocked;
 
     private InputManager inputManager;
-    private DungeonGrid dungeonGrid;
+    private EventManager eventManager;
 
     public override void OnAwake()
     {
-        dungeonGrid = FindObjectOfType<DungeonGrid>();
+        base.OnAwake();
         inputManager = FindObjectOfType<InputManager>();
+        eventManager = FindObjectOfType<EventManager>();
     }
 
     public override void OnUpdate()
     {
-        Checkinputs();
+        if (!inputsLocked) { Checkinputs(); }
+    }
+
+    private void NextMove()
+    {
+
+        if (movesLeft <= 0)
+        {
+            eventManager.TriggerNextTurn();
+        }
     }
 
     private void Checkinputs()
@@ -46,13 +54,5 @@ public class Player : Alive
         }
     }
 
-    public void Move(Vector2Int direction)
-    {
-        Vector2Int currentPos = GetPos();
-        Vector2Int newPos = new Vector2Int(currentPos.x + direction.x, currentPos.y + direction.y);
-        if (dungeonGrid.IsTileAvailible(newPos.x, newPos.y, dungeonGrid.walkableTiles))
-        {
-            SetPos(newPos);
-        }
-    }
+
 }

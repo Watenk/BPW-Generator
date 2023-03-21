@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public float PhysicsFrameRate; //UPS
+    public int currentTurn;
+    //Ups
+    public float PhysicsFrameRate; 
     private float physicsTimer;
 
     private List<BaseClass> baseClassList;
@@ -26,6 +28,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < baseClassList.Count; i++) { baseClassList[i].OnStart(); }
         for (int i = 0; i < baseClassLateList.Count; i++) { baseClassLateList[i].OnStart(); }
+        EventManager.OnNextTurn += OnNextTurn;
     }
 
     private void Update()
@@ -40,6 +43,11 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < baseClassList.Count; i++) { baseClassList[i].OnUpdate(); }
         for (int i = 0; i < baseClassLateList.Count; i++) { baseClassLateList[i].OnUpdate(); }
+    }
+
+    private void OnNextTurn()
+    {
+        currentTurn++;
     }
 
     private void PhysicsUpdate()
