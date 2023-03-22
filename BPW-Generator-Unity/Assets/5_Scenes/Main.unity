@@ -175,6 +175,7 @@ MonoBehaviour:
   PerlinMagnification: 40
   RoomTiles: 0300000004000000
   walkableTiles: 0200000005000000
+  corridorGeneratableTiles: 030000000400000005000000
   RoomsFloor: 5
   RoomAmount: 200
   MinRoomSize: 5

@@ -117,7 +117,7 @@ public class TileGrid : BaseClassLate
 
     public bool IsInGridBounds(int x, int y)
     {
-        if (x >= 0 && x <= Width && y >= 0 && y <= Height)
+        if (x >= 0 && x < Width && y >= 0 && y < Height)
         {
             return true;
         }

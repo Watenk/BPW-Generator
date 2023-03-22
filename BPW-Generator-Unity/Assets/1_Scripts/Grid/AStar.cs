@@ -2,38 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class AStar
 {
     //A self-written attempt at AStar
 
-    public List<Tile> CalcPath(Tile startTile, Tile targetTile, TileGrid grid)
+    public List<Tile> CalcPath(Tile startTile, Tile targetTile, TileGrid grid, List<ID> allowedTiles)
     {
         Dictionary<Tile, int> fCost = new Dictionary<Tile, int>(); //Tiles with calculated fCost
         Dictionary<Tile, Tile> parent = new Dictionary<Tile, Tile>(); //Parent of tile
         List<Tile> pendingTiles = new List<Tile>();
-        List<Tile> fastestPath = new List<Tile>(); //List of tiles with fastest path
+        List<Tile> path = new List<Tile>(); //List of tiles with fastest path
 
         Tile currentTile = startTile;
 
         //Calc all lowest fCosts until targetTile
         while (currentTile != targetTile)
         {
-            CalcSurroundingTiles(currentTile, targetTile, startTile, fCost, pendingTiles, grid, parent);
-            currentTile = GetLowestPending(pendingTiles, fCost);
             if (currentTile == null) { return null; } //Return null if cant reach target
+            CalcSurroundingTiles(currentTile, targetTile, startTile, fCost, pendingTiles, grid, allowedTiles, parent);
+            currentTile = GetLowestPending(pendingTiles, fCost);
         }
 
         //Retrace fastest path from targetTile to startTile
         while (currentTile != startTile)
         {
-            fastestPath.Add(currentTile);
+            path.Add(currentTile);
             parent.TryGetValue(currentTile, out Tile newTile);
             currentTile = newTile;
         }
 
-        fastestPath.Reverse();
-        return fastestPath;
+        path.Reverse();
+        return path;
     }
 
     private Tile GetLowestPending(List<Tile> pendingTiles, Dictionary<Tile, int> fCost)
@@ -62,31 +63,32 @@ public class AStar
         return currentTile;
     }
 
-    private void CalcSurroundingTiles(Tile currentTile, Tile targetTile, Tile startTile, Dictionary<Tile, int> fCost, List<Tile> pendingTiles, TileGrid grid, Dictionary<Tile, Tile> parent)
+    private void CalcSurroundingTiles(Tile currentTile, Tile targetTile, Tile startTile, Dictionary<Tile, int> fCost, List<Tile> pendingTiles, TileGrid grid, List<ID> allowedTiles, Dictionary<Tile, Tile> parent)
     {
         Vector2Int currentTilePos = currentTile.GetPos();
         //up
         Tile upTile = grid.GetTile(currentTilePos.x, currentTilePos.y - 1);
-        CalcTileCost(upTile, currentTile, targetTile, startTile, fCost, pendingTiles, parent);
+        CalcTileCost(upTile, currentTile, targetTile, startTile, fCost, pendingTiles, allowedTiles, parent);
 
         //right
         Tile rightTile = grid.GetTile(currentTilePos.x + 1, currentTilePos.y);
-        CalcTileCost(rightTile, currentTile, targetTile, startTile, fCost, pendingTiles, parent);
+        CalcTileCost(rightTile, currentTile, targetTile, startTile, fCost, pendingTiles, allowedTiles, parent);
 
         //down
         Tile downTile = grid.GetTile(currentTilePos.x, currentTilePos.y + 1);
-        CalcTileCost(downTile, currentTile, targetTile, startTile, fCost, pendingTiles, parent);
+        CalcTileCost(downTile, currentTile, targetTile, startTile, fCost, pendingTiles, allowedTiles, parent);
 
         //left
         Tile leftTile = grid.GetTile(currentTilePos.x - 1, currentTilePos.y);
-        CalcTileCost(leftTile, currentTile, targetTile, startTile, fCost, pendingTiles, parent);
+        CalcTileCost(leftTile, currentTile, targetTile, startTile, fCost, pendingTiles, allowedTiles, parent);
 
         pendingTiles.Remove(currentTile);
     }
 
-    private void CalcTileCost(Tile currentTile, Tile parentTile, Tile targetTile, Tile startTile, Dictionary<Tile, int> fCost, List<Tile> pendingTiles, Dictionary<Tile, Tile> parent)
+    private void CalcTileCost(Tile currentTile, Tile parentTile, Tile targetTile, Tile startTile, Dictionary<Tile, int> fCost, List<Tile> pendingTiles, List<ID> allowedTiles, Dictionary<Tile, Tile> parent)
     {
-        if (!fCost.ContainsKey(currentTile)) //if value is not calculated
+        if (currentTile == null) return;
+        if (!fCost.ContainsKey(currentTile) && allowedTiles.Contains(currentTile.GetID())) //if value is not calculated & isWalkable
         {
             Vector2Int currentTilePos = currentTile.GetPos();
             Vector2Int startTilePos = startTile.GetPos();

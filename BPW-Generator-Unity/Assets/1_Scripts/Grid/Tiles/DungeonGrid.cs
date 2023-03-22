@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class DungeonGrid : TileGrid
@@ -13,6 +12,7 @@ public class DungeonGrid : TileGrid
     [Header("Rooms")]
     public List <ID> RoomTiles = new List<ID>(); //Tiles where rooms can generate on
     public List<ID> walkableTiles = new List<ID>(); //Tiles where entities can move to/on
+    public List<ID> corridorGeneratableTiles = new List<ID>(); //Tiles where corridors can generate on
     public ID RoomsFloor;
     public int RoomAmount;
     public int MinRoomSize;
@@ -58,8 +58,8 @@ public class DungeonGrid : TileGrid
         GenerateTerrain();
         GenerateRooms();
         GenerateCorridors();
-        SpawnObjects();
         SpawnEntities();
+        SpawnObjects();
         gridRenderer.Draw();
     }
 
@@ -127,15 +127,7 @@ public class DungeonGrid : TileGrid
         }
     }
 
-    private void AddEntity(GameObject prefab, Vector2Int pos)
-    {
-        Alive currentEntity = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Alive>();
-        gameManager.AddObject(currentEntity);
-        entitys.Add(currentEntity);
-        currentEntity.SetID(nextEntityID);
-        nextEntityID++;
-        currentEntity.SetPos(pos);
-    }
+    //Getters -----------------------------------------------------------
 
     private Room GetClosestRoom(Room room)
     {
@@ -155,17 +147,82 @@ public class DungeonGrid : TileGrid
         return closestRoom;
     }
 
-    private Room GetRandomRoom()
+    public Room GetRandomRoom()
     {
         return rooms[Random.Range(0, rooms.Count)];
     }
+
+    public Tile GetRandomTile(int x1, int y1, int x2, int y2, List<ID> allowedTiles)
+    {
+        int amountOfRetrys = Mathf.Abs(x2 - x1) * Mathf.Abs(y2 - y1);
+
+        retry:
+        int randomX = Random.Range(x1, x2);
+        int randomY = Random.Range(y1, y2);
+
+        Tile currentTile = GetTile(randomX, randomY);
+        if (currentTile != null && allowedTiles.Contains(currentTile.GetID()))
+        {
+            return currentTile;
+        }
+
+        amountOfRetrys--;
+        if (amountOfRetrys < 1)
+        {
+            return null;
+        }
+        goto retry;
+    }
+
+    public Tile GetRandomTile(List<ID> allowedTiles)
+    {
+        int amountOfRetrys = Width * Height;
+
+        retry:
+        int randomX = Random.Range(0, Width);
+        int randomY = Random.Range(0, Height);
+
+        Tile currentTile = GetTile(randomX, randomY);
+        if (currentTile != null && allowedTiles.Contains(currentTile.GetID()))
+        {
+            return currentTile;
+        }
+
+        amountOfRetrys--;
+        if (amountOfRetrys < 1)
+        {
+            return null;
+        }
+        goto retry;
+    }
+
+    private int GetPerlinIntValue(float x, float y, ID[] tiles)
+    {
+        float normalizedPerlin = Mathf.PerlinNoise((x + perlinXOffset) / PerlinMagnification, (y + perlinYOffset) / PerlinMagnification); //Generate normalized value
+        float tileIDPerlin = Mathf.Clamp(normalizedPerlin, 0.0f, 1.0f) * tiles.Length + 1; //Clamp all values between 0.0 and 1.0 and multiply with tileAmount
+        tileIDPerlin = Mathf.Clamp(tileIDPerlin, 1.0f, tiles.Length); //Clamp between 0 and tileAmount
+        return Mathf.FloorToInt(tileIDPerlin); //Return int
+    }
+
+    //Setters ----------------------------------------------------------------------
+
+    private void AddEntity(GameObject prefab, Vector2Int pos)
+    {
+        Alive currentEntity = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Alive>();
+        gameManager.AddObject(currentEntity);
+        entitys.Add(currentEntity);
+        currentEntity.SetID(nextEntityID);
+        nextEntityID++;
+        currentEntity.SetPos(pos);
+    }
+
+    //Terrain / Dungeon generation -------------------------------------------------
 
     private void CalcPerlinOffsets()
     {
         perlinXOffset = Random.Range(-10000, 10000);
         perlinYOffset = Random.Range(-10000, 10000);
     }
-
 
     private void GenerateTerrain()
     {
@@ -227,7 +284,7 @@ public class DungeonGrid : TileGrid
                 Vector2Int closestRoomPos = closestRoom.GetRandomPos();
                 Tile currentRoomTile = GetTile(currentRoomPos.x, currentRoomPos.y);
                 Tile closestRoomTile = GetTile(closestRoomPos.x, closestRoomPos.y);
-                List<Tile> fastestPath = aStar.CalcPath(currentRoomTile, closestRoomTile, this);
+                List<Tile> fastestPath = aStar.CalcPath(currentRoomTile, closestRoomTile, this, corridorGeneratableTiles);
 
                 if (fastestPath != null)
                 {
@@ -249,13 +306,5 @@ public class DungeonGrid : TileGrid
             }
         }
         Debug.Log("Generated " + corridorsGenerated + " Corridor(s), " + failedCorridors + " Corridors failed");
-    }
-
-    private int GetPerlinIntValue(float x, float y, ID[] tiles)
-    {
-        float normalizedPerlin = Mathf.PerlinNoise((x + perlinXOffset) / PerlinMagnification, (y + perlinYOffset) / PerlinMagnification); //Generate normalized value
-        float tileIDPerlin = Mathf.Clamp(normalizedPerlin, 0.0f, 1.0f) * tiles.Length + 1; //Clamp all values between 0.0 and 1.0 and multiply with tileAmount
-        tileIDPerlin = Mathf.Clamp(tileIDPerlin, 1.0f, tiles.Length); //Clamp between 0 and tileAmount
-        return Mathf.FloorToInt(tileIDPerlin); //Return int
     }
 }

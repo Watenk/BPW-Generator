@@ -24,12 +24,20 @@ public class Alive : BaseClass
         EventManager.OnNextTurn += OnNextTurn;
     }
 
-    public Vector2Int GetPos() { return pos; }
+    public Vector2Int GetPos() 
+    { 
+        return pos; 
+    }
 
     public void SetPos(Vector2Int newPos) 
     {
         gameObject.transform.position = new Vector3(newPos.x, -newPos.y, 0f);
         pos = newPos;
+    }
+
+    public Tile GetCurrentTile()
+    {
+        return dungeonGrid.GetTile(pos.x, pos.y);
     }
 
     public int GetID() 
@@ -42,11 +50,6 @@ public class Alive : BaseClass
         ID = newID; 
     }
 
-    public virtual void OnNextTurn()
-    {
-
-    }
-
     public void Move(Vector2Int direction)
     {
         Vector2Int currentPos = GetPos();
@@ -56,4 +59,10 @@ public class Alive : BaseClass
             SetPos(newPos);
         }
     }
+
+    public virtual void OnNextTurn()
+    {
+
+    }
+
 }

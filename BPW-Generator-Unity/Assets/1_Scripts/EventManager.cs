@@ -7,6 +7,7 @@ public class EventManager : BaseClass
     public delegate void NextTurn();
     public static event NextTurn OnNextTurn;
 
+    [ContextMenu("TriggerNextTurn")]
     public void TriggerNextTurn()
     {
         OnNextTurn();
