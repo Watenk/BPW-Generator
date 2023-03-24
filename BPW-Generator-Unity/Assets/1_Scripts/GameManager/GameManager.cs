@@ -56,11 +56,24 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < baseClassLateList.Count; i++) { baseClassLateList[i].OnPhysicsUpdate(); }
     }
 
-    public void AddObject(BaseClass _object)
+    public void AddObject(GameObject currentObject)
     {
-        _object.OnAwake();
-        _object.OnStart();
-        baseClassList.Add(_object);
+        BaseClass[] scripts = currentObject.GetComponents<BaseClass>();
+
+        for (int i = 0; i < scripts.Length; i++) 
+        {
+            scripts[i].OnAwake();
+        }
+
+        for (int i = 0; i < scripts.Length; i++)
+        {
+            scripts[i].OnStart();
+        }
+
+        for (int i = 0; i < scripts.Length; i++)
+        {
+            baseClassList.Add(scripts[i]);
+        }
     }
 
     public void RemoveObject(BaseClass _object)

@@ -18,12 +18,12 @@ public class IntGrid : BaseClassLate
     public override void OnAwake()
     {
         dungeonGrid = FindObjectOfType<DungeonGrid>();
+        width = dungeonGrid.Width;
+        height = dungeonGrid.Height;
     }
 
     public override void OnStart()
     {
-        width = dungeonGrid.Width;
-        height = dungeonGrid.Height;
         gridArray = new IntTile[dungeonGrid.Width, dungeonGrid.Height];
         PrintGridSize();
     }

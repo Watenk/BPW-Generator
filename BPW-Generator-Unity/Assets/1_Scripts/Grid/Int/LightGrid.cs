@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class LightGrid : IntGrid
 {
+    public int DarknessLevel; //Between 0 and 11
+
     public override void OnStart()
     {
         base.OnStart();
 
         FillWithDarkness();
+        gridRenderer.Draw();
     }
 
     private void FillWithDarkness()
@@ -17,7 +20,7 @@ public class LightGrid : IntGrid
         {
             for (int x = 0; x < width; x++)
             {
-                gridArray[x, y] = new IntTile(0, new Vector2Int(x, y));
+                gridArray[x, y] = new IntTile(DarknessLevel, new Vector2Int(x, y));
             }
         }
     }

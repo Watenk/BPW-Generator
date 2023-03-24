@@ -176,7 +176,7 @@ public class DungeonGrid : TileGrid
         currentEntity.SetPos(pos);
         //Lists
         entitys.Add(currentEntity);
-        gameManager.AddObject(currentEntity);
+        gameManager.AddObject(currentEntity.gameObject);
 
         nextEntityID++;
     }
