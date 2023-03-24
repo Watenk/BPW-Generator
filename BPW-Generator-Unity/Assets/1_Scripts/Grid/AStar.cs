@@ -20,9 +20,9 @@ public class AStar
         //Calc all lowest fCosts until targetTile
         while (currentTile != targetTile)
         {
-            if (currentTile == null) { return null; } //Return null if cant reach target
             CalcSurroundingTiles(currentTile, targetTile, startTile, fCost, pendingTiles, grid, allowedTiles, parent);
             currentTile = GetLowestPending(pendingTiles, fCost);
+            if (currentTile == null) { return null; } //Return null if cant reach target
         }
 
         //Retrace fastest path from targetTile to startTile

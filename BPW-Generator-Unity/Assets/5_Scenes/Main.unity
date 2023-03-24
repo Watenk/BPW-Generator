@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridRenderer: {fileID: 2005937976}
-  Width: 1000
+  Width: 500
   Height: 100
   WorldGenerationTiles: 01000000020000000300000004000000
   PerlinMagnification: 40
@@ -185,7 +185,7 @@ MonoBehaviour:
   RetryFailedRoomGeneration: 10000
   PlayerSpawnRadius: 40
   EnemySpawnChance: 100
-  EnemyMaxSpawnAmount: 5
+  EnemyMaxSpawnAmount: 1
   PlayerPrefab: {fileID: 4003422317840242220, guid: 0c778fe724419ce43ab35613ef96dc6e, type: 3}
   EnemyPrefab: {fileID: 6900312534725690762, guid: a84fc604258344d40a6b7f7f2dbb0c2c, type: 3}
 --- !u!1 &705507993
@@ -584,7 +584,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2001503558
 MonoBehaviour:
   m_ObjectHideFlags: 0

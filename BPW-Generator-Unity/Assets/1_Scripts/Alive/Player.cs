@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Player : Alive
 {
-    private int movesLeft;
+    public int MovesPerTurn; //Amount of moves the player can do before ending the turn
+    public int remainingMoves;
+
     private bool inputsLocked;
 
     private InputManager inputManager;
@@ -17,17 +19,23 @@ public class Player : Alive
         eventManager = FindObjectOfType<EventManager>();
     }
 
+    public override void OnStart()
+    {
+        base.OnStart();
+        remainingMoves = MovesPerTurn;
+    }
+
     public override void OnUpdate()
     {
         if (!inputsLocked) { Checkinputs(); }
     }
 
-    private void NextMove()
+    private void NextTurnCheck()
     {
-
-        if (movesLeft <= 0)
+        if (!CheckRemainingMoves())
         {
             eventManager.TriggerNextTurn();
+            remainingMoves = MovesPerTurn;
         }
     }
 
@@ -54,5 +62,19 @@ public class Player : Alive
         }
     }
 
+    public override void Move(Vector2Int direction)
+    {
+        base.Move(direction);
+        remainingMoves -= 1;
+        NextTurnCheck();
+    }
 
+    private bool CheckRemainingMoves()
+    {
+        if (remainingMoves <= 0)
+        {
+            return false;
+        }
+        return true;
+    }
 }

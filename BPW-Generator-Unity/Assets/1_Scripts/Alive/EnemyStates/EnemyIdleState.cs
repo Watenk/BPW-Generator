@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyIdleState : BaseState
@@ -8,16 +9,16 @@ public class EnemyIdleState : BaseState
     public List<ID> walkableTiles = new List<ID>();
 
     private AStar aStar;
-    private Enemy enemy;
     private DungeonGrid dungeonGrid;
+    private Enemy enemy;
 
     private Tile targetTile;
 
-    public override void OnAwake()
+    public void Awake()
     {
         aStar = new AStar();
-        enemy = gameObject.GetComponent<Enemy>();
         dungeonGrid = FindObjectOfType<DungeonGrid>();
+        enemy = gameObject.GetComponent<Enemy>();
     }
 
     public override void OnStart()
@@ -27,10 +28,21 @@ public class EnemyIdleState : BaseState
 
     public override void OnUpdate()
     {
-        List<Tile> path = aStar.CalcPath(enemy.GetCurrentTile(), targetTile, dungeonGrid, walkableTiles);
+        List<Tile> path = aStar.CalcPath(enemy.GetCurrentTile(), targetTile, dungeonGrid, walkableTiles); //Something wrong??
         if (path != null)
         {
-            enemy.SetPos(path[0].GetPos());
+            if (path.Count >= 1)
+            {
+                enemy.SetPos(path[0].GetPos());
+            }
+            else
+            {
+                targetTile = GetTargetTile();
+            }
+        }
+        else
+        {
+            targetTile = GetTargetTile();
         }
     }
 

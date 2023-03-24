@@ -5,7 +5,7 @@ using UnityEngine;
 public class Alive : BaseClass
 {
     private Vector2Int pos;
-    private int ID;
+    public int ID;
 
     protected static Vector2Int up = new Vector2Int(0, -1);
     protected static Vector2Int right = new Vector2Int(1, 0);
@@ -24,15 +24,16 @@ public class Alive : BaseClass
         EventManager.OnNextTurn += OnNextTurn;
     }
 
+    //Getters----------------------------------------
+
     public Vector2Int GetPos() 
-    { 
+    {
         return pos; 
     }
 
-    public void SetPos(Vector2Int newPos) 
+    public int GetID()
     {
-        gameObject.transform.position = new Vector3(newPos.x, -newPos.y, 0f);
-        pos = newPos;
+        return ID;
     }
 
     public Tile GetCurrentTile()
@@ -40,9 +41,12 @@ public class Alive : BaseClass
         return dungeonGrid.GetTile(pos.x, pos.y);
     }
 
-    public int GetID() 
-    { 
-        return ID; 
+    //Setters-----------------------------------------
+
+    public void SetPos(Vector2Int newPos) 
+    {
+        gameObject.transform.position = new Vector3(newPos.x, -newPos.y, 0f);
+        pos = newPos;
     }
 
     public void SetID(int newID) 
@@ -50,7 +54,9 @@ public class Alive : BaseClass
         ID = newID; 
     }
 
-    public void Move(Vector2Int direction)
+    //Functions---------------------------------------
+
+    public virtual void Move(Vector2Int direction)
     {
         Vector2Int currentPos = GetPos();
         Vector2Int newPos = new Vector2Int(currentPos.x + direction.x, currentPos.y + direction.y);
@@ -64,5 +70,4 @@ public class Alive : BaseClass
     {
 
     }
-
 }

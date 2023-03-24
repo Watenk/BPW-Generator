@@ -63,6 +63,8 @@ public class DungeonGrid : TileGrid
         gridRenderer.Draw();
     }
 
+    //Getters -----------------------------------------------------------
+
     public Alive GetEntity(int ID)
     {
         for (int i = 0; i < entitys.Count; i++)
@@ -86,48 +88,6 @@ public class DungeonGrid : TileGrid
         }
         return null;
     }
-
-    private void SpawnObjects()
-    {
-        //Need to implement
-    }
-
-    private void SpawnEntities()
-    {
-        //Player
-        List<ID> playerSpawnTiles = new List<ID>() { ID.grass };
-        Vector2Int playerSpawnPos = FindRandomFreeSpace(0, 0, PlayerSpawnRadius, PlayerSpawnRadius, playerSpawnTiles).GetPos();
-        AddEntity(PlayerPrefab, playerSpawnPos);
-        inputs.FocusOnPlayer();
-
-        //Enemy's
-        for (int i = 0; i < rooms.Count; i++)
-        {
-            int spawnPercentage = Random.Range(1, 100);
-            if (spawnPercentage <= EnemySpawnChance)
-            {
-                Room currentRoom = rooms[i];
-                
-                int enemyAmount = Random.Range(1, EnemyMaxSpawnAmount);
-                
-                for (int j = 0; j < enemyAmount; j++)
-                {
-                    retry:
-                    Vector2Int currentEnemySpawnPos = currentRoom.GetRandomPos();
-                    if (GetEntity(currentEnemySpawnPos) == null)
-                    {
-                        AddEntity(EnemyPrefab, currentEnemySpawnPos);   
-                    }
-                    else
-                    {
-                        goto retry;
-                    }
-                }
-            }
-        }
-    }
-
-    //Getters -----------------------------------------------------------
 
     private Room GetClosestRoom(Room room)
     {
@@ -204,19 +164,66 @@ public class DungeonGrid : TileGrid
         return Mathf.FloorToInt(tileIDPerlin); //Return int
     }
 
-    //Setters ----------------------------------------------------------------------
+    //Setters / Adders 
 
     private void AddEntity(GameObject prefab, Vector2Int pos)
     {
+        //Instantiate
         Alive currentEntity = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Alive>();
-        gameManager.AddObject(currentEntity);
-        entitys.Add(currentEntity);
+        currentEntity.transform.SetParent(this.gameObject.transform);
+        //Values
         currentEntity.SetID(nextEntityID);
-        nextEntityID++;
         currentEntity.SetPos(pos);
+        //Lists
+        entitys.Add(currentEntity);
+        gameManager.AddObject(currentEntity);
+
+        nextEntityID++;
     }
 
     //Terrain / Dungeon generation -------------------------------------------------
+
+    private void SpawnObjects()
+    {
+        //Need to implement
+    }
+
+    private void SpawnEntities()
+    {
+        //Player
+        List<ID> playerSpawnTiles = new List<ID>() { ID.grass };
+        Vector2Int playerSpawnPos = FindRandomFreeSpace(0, 0, PlayerSpawnRadius, PlayerSpawnRadius, playerSpawnTiles).GetPos();
+        AddEntity(PlayerPrefab, playerSpawnPos);
+        inputs.FocusOnPlayer();
+
+        //Enemy's
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            int spawnPercentage = Random.Range(1, 100);
+            if (spawnPercentage <= EnemySpawnChance)
+            {
+                Room currentRoom = rooms[i];
+
+                int enemyAmount = Random.Range(1, EnemyMaxSpawnAmount);
+
+                for (int j = 0; j < enemyAmount; j++)
+                {
+                retry:
+                    Vector2Int currentEnemySpawnPos = currentRoom.GetRandomPos();
+                    if (GetEntity(currentEnemySpawnPos) == null)
+                    {
+                        AddEntity(EnemyPrefab, currentEnemySpawnPos);
+                    }
+                    else
+                    {
+                        goto retry;
+                    }
+                }
+            }
+        }
+
+        Debug.Log(nextEntityID + " Entity's Summoned");
+    }
 
     private void CalcPerlinOffsets()
     {

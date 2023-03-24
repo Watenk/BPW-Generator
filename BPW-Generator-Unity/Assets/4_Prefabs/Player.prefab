@@ -45,6 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ace8d295196ffab43ba98f5e4ca0b958, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 0
+  MovesPerTurn: 2
+  remainingMoves: 0
 --- !u!1 &6930583470090431047
 GameObject:
   m_ObjectHideFlags: 0

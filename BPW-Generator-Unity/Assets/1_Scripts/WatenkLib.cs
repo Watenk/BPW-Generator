@@ -43,7 +43,6 @@ public class FSM
     {
         currentState?.OnExit();
         currentState = States[newState];
-        currentState?.OnAwake();
         currentState?.OnStart();
     }
 
@@ -62,7 +61,6 @@ public abstract class BaseState : MonoBehaviour
 {
     protected FSM owner;
     public void SetOwner(FSM owner) { this.owner = owner; }
-    public virtual void OnAwake() { }
     public virtual void OnStart() { }
     public virtual void OnUpdate() { }
     public virtual void OnExit() { }
