@@ -13,7 +13,7 @@ public class IntGrid : BaseClassEarly
     [HideInInspector]
     public int height;
 
-    private DungeonGrid dungeonGrid;
+    protected DungeonGrid dungeonGrid;
 
     public override void OnAwake()
     {

@@ -64,6 +64,7 @@ public class DungeonGrid : TileGrid
         SpawnEntities();
         SpawnObjects();
         gridRenderer.Draw();
+        lightGrid.UpdateLights();
     }
 
     //Getters -----------------------------------------------------------
@@ -195,7 +196,7 @@ public class DungeonGrid : TileGrid
             if (spawnPercentage <= LightSpawnChance)
             {
                 Vector2Int randomPos = rooms[i].GetRandomPos();
-                lightGrid.DrawLight(randomPos);
+                lightGrid.AddLight(randomPos);
             }
         }
     }

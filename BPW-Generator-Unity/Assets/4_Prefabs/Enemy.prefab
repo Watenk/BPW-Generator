@@ -143,5 +143,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 099112fd6dffee84bbd6c230161e53c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TargetRange: 10
+  TargetRange: 5
+  GiveUpLenght: 50
   walkableTiles: 0200000005000000

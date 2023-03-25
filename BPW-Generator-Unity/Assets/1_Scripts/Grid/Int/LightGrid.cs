@@ -1,40 +1,79 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class LightGrid : IntGrid
 {
-    public int LightRange; //Range a light has
+    public int LightRange; //Amount of tiles light will travel from a lightSource
+    public List<ID> lightAllowedTiles = new List<ID>(); //Tiles light is allowed on - W.I.P (probably too much work)
 
     private int lightLevelAmount;
+    private List<Vector2Int> lights = new List<Vector2Int>();
 
     public override void OnStart()
     {
         base.OnStart();
         lightLevelAmount = gridRenderer.TileAmount - 1;
 
-        FillWithDarkness();
-        gridRenderer.Draw();
+        UpdateLights();
     }
 
-    public void DrawLight(Vector2Int pos)
+    public void UpdateLights()
     {
-        for (int y = pos.y - LightRange - 1; y < pos.y + LightRange + 1; y++)
+        FillWithDarkness();
+        for (int i = 0; i < lights.Count; i++)
         {
-            for (int x = pos.x - LightRange - 1; x < pos.x + LightRange + 1; x++)
+            int xPos = lights[i].x;
+            int yPos = lights[i].y;
+
+            for (int y = yPos - LightRange; y < yPos + LightRange; y++)
             {
-                int distance = Mathf.Abs(pos.x - x) + Mathf.Abs(pos.y - y);
-                int value = Mathf.RoundToInt((float)lightLevelAmount / ((float)LightRange / (float)distance));
-                IntTile currentTileValue = GetTile(x, y);
-                
-                if (currentTileValue != null)
+                for (int x = xPos - LightRange; x < xPos + LightRange; x++)
                 {
-                    if (distance <= LightRange)
+                    IntTile currentTile = GetTile(x, y);
+                    if (currentTile != null)
                     {
-                        SetTile(x, y, value, false);
+                        int distance = Mathf.Abs(xPos - x) + Mathf.Abs(yPos - y);
+                        if (distance <= LightRange)// && lightAllowedTiles.Contains(dungeonGrid.GetTile(x, y).GetID())) 
+                        {
+                            int value = Mathf.RoundToInt((float)lightLevelAmount / ((float)LightRange / (float)distance));
+                            int difference = lightLevelAmount - currentTile.GetValue();
+                            int newValue = value - difference;
+                            if (newValue < lightLevelAmount)
+                            {
+                                newValue += Random.Range(-1, 2);
+                            }
+                            if (newValue < 0) { newValue = 0; }
+
+                            SetTile(x, y, newValue, false);
+                        }
                     }
                 }
             }
+        }
+        gridRenderer.Draw();
+    }
+
+    public void MoveLight(Vector2Int pos, Vector2Int direction)
+    {
+        if (lights.Contains(pos))
+        {
+            RemoveLight(pos);
+            AddLight(pos + direction);
+        }
+    }
+
+    public void AddLight(Vector2Int pos)
+    {
+        lights.Add(pos);
+    }
+
+    public void RemoveLight(Vector2Int pos)
+    {
+        if (lights.Contains(pos))
+        {
+            lights.Remove(pos);
         }
     }
 

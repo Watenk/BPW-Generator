@@ -12,7 +12,7 @@ public class Alive : BaseClass
     protected static Vector2Int down = new Vector2Int(0, 1);
     protected static Vector2Int left = new Vector2Int(-1, 0);
 
-    private DungeonGrid dungeonGrid;
+    protected DungeonGrid dungeonGrid;
 
     public override void OnAwake()
     {

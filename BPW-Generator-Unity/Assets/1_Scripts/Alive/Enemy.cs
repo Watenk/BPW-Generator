@@ -6,6 +6,8 @@ public class Enemy : Alive
 {
     public FSM attackState;
 
+    //Need to add when to switch to attackstate
+
     public override void OnStart()
     {
         base.OnStart();

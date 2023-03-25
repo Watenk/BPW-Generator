@@ -5,6 +5,8 @@ using UnityEngine;
 public class Player : Alive
 {
     public int MovesPerTurn; //Amount of moves the player can do before ending the turn
+    public int MoveCost; //amount of moves subtracts after moving a tile
+    public int ReplaceTileCost; //Amount of moves subtracts after replacing a tile
     public int remainingMoves;
 
     private bool inputsLocked;
@@ -25,14 +27,13 @@ public class Player : Alive
     {
         base.OnStart();
         remainingMoves = MovesPerTurn;
+        lightGrid.AddLight(GetPos());
     }
 
     public override void OnUpdate()
     {
         if (!inputsLocked) { Checkinputs(); }
     }
-
-
 
     private void Checkinputs()
     {
@@ -59,10 +60,22 @@ public class Player : Alive
 
     public override void Move(Vector2Int direction)
     {
-        base.Move(direction);
-        lightGrid.DrawLight(GetPos());
-        lightGrid.gridRenderer.Draw();
-        AddMove();
+        //Move a Tile
+        Vector2Int currentPos = GetPos();
+        Vector2Int newPos = new Vector2Int(currentPos.x + direction.x, currentPos.y + direction.y);
+        if (dungeonGrid.IsTileAvailible(newPos.x, newPos.y, dungeonGrid.walkableTiles))
+        {
+            lightGrid.MoveLight(GetPos(), direction);
+            lightGrid.UpdateLights();
+            SetPos(newPos);
+            AddMove(MoveCost);
+        }
+        //Replace a tile
+        else if (dungeonGrid.IsInGridBounds(newPos.x, newPos.y))
+        {
+            dungeonGrid.SetTile(newPos.x, newPos.y, global::ID.pavedStone, true);
+            AddMove(ReplaceTileCost);
+        }
     }
 
     private bool CheckRemainingMoves()
@@ -74,10 +87,13 @@ public class Player : Alive
         return true;
     }
 
-    private void AddMove()
+    private void AddMove(int amount)
     {
-        remainingMoves -= 1;
-        NextTurnCheck();
+        for (int i = 0; i < amount; i++)
+        {
+            remainingMoves -= 1;
+            NextTurnCheck();
+        }
     }
 
     private void NextTurnCheck()

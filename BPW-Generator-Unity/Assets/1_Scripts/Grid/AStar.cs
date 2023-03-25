@@ -7,7 +7,6 @@ using Unity.VisualScripting;
 public class AStar
 {
     //A self-written attempt at AStar
-
     public List<Tile> CalcPath(Tile startTile, Tile targetTile, TileGrid grid, List<ID> allowedTiles)
     {
         Dictionary<Tile, int> fCost = new Dictionary<Tile, int>(); //Tiles with calculated fCost

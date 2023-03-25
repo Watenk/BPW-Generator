@@ -99,6 +99,31 @@ public class IntGridRenderer : BaseClassEarly
                     uv[verticesAndUvIndex + 0] = new Vector2(uv00[currentTileValue].x, uv11[currentTileValue].y);
                     uv[verticesAndUvIndex + 3] = new Vector2(uv11[currentTileValue].x, uv11[currentTileValue].y);
                 }
+                else
+                {
+                    //Remove quads
+                    //Vertices
+                    int verticesAndUvIndex = i * 4;
+                    vertices[verticesAndUvIndex + 0] = new Vector3(0, 0);
+                    vertices[verticesAndUvIndex + 1] = new Vector3(0, 0); ;
+                    vertices[verticesAndUvIndex + 2] = new Vector3(0, 0);
+                    vertices[verticesAndUvIndex + 3] = new Vector3(0, 0);
+
+                    //Triangles
+                    int trianglesIndex = i * 6;
+                    triangles[trianglesIndex + 0] = 0;
+                    triangles[trianglesIndex + 1] = 0;
+                    triangles[trianglesIndex + 2] = 0;
+                    triangles[trianglesIndex + 3] = 0;
+                    triangles[trianglesIndex + 4] = 0;
+                    triangles[trianglesIndex + 5] = 0;
+
+                    //Map values to uv
+                    uv[verticesAndUvIndex + 1] = new Vector2(0, 0);
+                    uv[verticesAndUvIndex + 2] = new Vector2(0, 0);
+                    uv[verticesAndUvIndex + 0] = new Vector2(0, 0);
+                    uv[verticesAndUvIndex + 3] = new Vector2(0, 0);
+                }
                 i++;
             }
         }

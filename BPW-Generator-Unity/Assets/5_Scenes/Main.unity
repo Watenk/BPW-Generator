@@ -183,6 +183,7 @@ MonoBehaviour:
   MaxRoomConnectDistance: 50
   RoomAvoidEdges: 2
   RetryFailedRoomGeneration: 10000
+  LightSpawnChance: 50
   PlayerSpawnRadius: 40
   EnemySpawnChance: 100
   EnemyMaxSpawnAmount: 1
@@ -555,7 +556,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ScrollSpeed: 5
   minCamSize: 2
-  maxCamSize: 50
+  maxCamSize: 10
 --- !u!114 &1349338436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -600,8 +601,8 @@ MonoBehaviour:
   gridRenderer: {fileID: 991295275}
   width: 0
   height: 0
-  DarknessLevel: 11
-  LightRange: 15
+  LightRange: 10
+  lightAllowedTiles: 010000000200000005000000
 --- !u!4 &2001503559
 Transform:
   m_ObjectHideFlags: 0
