@@ -12,11 +12,11 @@ public class EnemyAttackState : EnemyBaseState
 
         if (path != null && path.Count >= 1 && path.Count <= GiveUpLenght)
         {
-            enemy.SetPos(path[0].GetPos());
-        }
-        else
-        {
-            owner.SwitchState(typeof(EnemyIdleState));
+            Vector2Int pathPos = path[0].GetPos();
+            if (dungeonGrid.IsTileAvailible(pathPos.x, pathPos.y, dungeonGrid.walkableTiles))
+            {
+                enemy.SetPos(pathPos);
+            }
         }
     }
 }

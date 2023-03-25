@@ -93,6 +93,11 @@ public class DungeonGrid : TileGrid
         return null;
     }
 
+    public List<Alive> GetEntitys()
+    {
+        return entitys;
+    }
+
     private Room GetClosestRoom(Room room)
     {
         Vector2Int currentRoomPos = room.GetMiddle();
@@ -138,6 +143,41 @@ public class DungeonGrid : TileGrid
         goto retry;
     }
 
+    public override bool IsTileAvailible(int x, int y, List<ID> allowedIDs)
+    {
+        bool isNull = false;
+        bool isUnallowedID = true;
+        bool entity = false;
+
+        if (GetTile(x, y) == null) 
+        {
+            isNull = true;
+        }
+
+        ID currentTileID = GetTile(x, y).GetID();
+        for (int i = 0; i < allowedIDs.Count; i++)
+        {
+            if (currentTileID == allowedIDs[i])
+            {
+                isUnallowedID = false;
+            }
+        }
+
+        for (int i = 0; i < entitys.Count; i++)
+        {
+            if (entitys[i].GetPos() == new Vector2Int(x, y))
+            {
+                entity = true;
+            }
+        }
+
+        if (isNull == false && isUnallowedID == false && entity == false)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public Tile GetRandomTile(List<ID> allowedTiles)
     {
         int amountOfRetrys = Width * Height;
@@ -169,6 +209,11 @@ public class DungeonGrid : TileGrid
     }
 
     //Setters / Adders 
+
+    public void SetSpriteActive(int id ,bool value)
+    {
+        GetEntity(id).sprite.SetActive(value);
+    }
 
     private void AddEntity(GameObject prefab, Vector2Int pos)
     {
@@ -304,13 +349,13 @@ public class DungeonGrid : TileGrid
                 Vector2Int closestRoomPos = closestRoom.GetRandomPos();
                 Tile currentRoomTile = GetTile(currentRoomPos.x, currentRoomPos.y);
                 Tile closestRoomTile = GetTile(closestRoomPos.x, closestRoomPos.y);
-                List<Tile> fastestPath = aStar.CalcPath(currentRoomTile, closestRoomTile, this, corridorGeneratableTiles);
+                List<Tile> path = aStar.CalcPath(currentRoomTile, closestRoomTile, this, corridorGeneratableTiles);
 
-                if (fastestPath != null)
+                if (path != null)
                 {
-                    for (int j = 0; j < fastestPath.Count; j++)
+                    for (int j = 0; j < path.Count; j++)
                     {
-                        Vector2Int currentTilePos = fastestPath[j].GetPos();
+                        Vector2Int currentTilePos = path[j].GetPos();
                         SetTile(currentTilePos.x, currentTilePos.y, ID.pavedStone, false);
                     }
                     corridorsGenerated++;

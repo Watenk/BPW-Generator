@@ -4,7 +4,6 @@ using UnityEngine;
 
 public abstract class EnemyBaseState : BaseState
 {
-    public int TargetRange; //range from currentPos a targetPos can be chosen
     public int GiveUpLenght; //Give up if path is longer 
     public List<ID> walkableTiles = new List<ID>();
 

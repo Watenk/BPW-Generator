@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class Enemy : Alive
 {
+    public int PlayerDetectRange;
     public FSM attackState;
-
-    //Need to add when to switch to attackstate
 
     public override void OnStart()
     {
@@ -17,6 +16,23 @@ public class Enemy : Alive
 
     public override void OnNextTurn()
     {
+        UpdateState();
         attackState.OnUpdate();
+    }
+
+    private void UpdateState()
+    {
+        Vector2Int enemyPos = GetPos();
+        Vector2Int playerPos = dungeonGrid.GetEntity(0).GetPos();
+
+        int distance = Mathf.Abs(playerPos.x - enemyPos.x) + Mathf.Abs(playerPos.y - enemyPos.y);
+        if (distance <= PlayerDetectRange)
+        {
+            attackState.SwitchState(typeof(EnemyAttackState));
+        }
+        else
+        {
+            attackState.SwitchState(typeof(EnemyIdleState));
+        }
     }
 }

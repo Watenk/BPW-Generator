@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 0
+  sprite: {fileID: 6930583470090431047}
   MovesPerTurn: 2
   MoveCost: 1
   ReplaceTileCost: 6

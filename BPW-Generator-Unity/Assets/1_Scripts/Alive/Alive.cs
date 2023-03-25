@@ -6,6 +6,7 @@ public class Alive : BaseClass
 {
     private Vector2Int pos;
     public int ID;
+    public GameObject sprite;
 
     protected static Vector2Int up = new Vector2Int(0, -1);
     protected static Vector2Int right = new Vector2Int(1, 0);
@@ -60,6 +61,7 @@ public class Alive : BaseClass
     {
         Vector2Int currentPos = GetPos();
         Vector2Int newPos = new Vector2Int(currentPos.x + direction.x, currentPos.y + direction.y);
+
         if (dungeonGrid.IsTileAvailible(newPos.x, newPos.y, dungeonGrid.walkableTiles))
         {
             SetPos(newPos);

@@ -52,6 +52,7 @@ public class LightGrid : IntGrid
                 }
             }
         }
+        CullEntitys();
         gridRenderer.Draw();
     }
 
@@ -74,6 +75,23 @@ public class LightGrid : IntGrid
         if (lights.Contains(pos))
         {
             lights.Remove(pos);
+        }
+    }
+
+    private void CullEntitys()
+    {
+        List<Alive> entitys = dungeonGrid.GetEntitys();
+        for (int i = 0; i < entitys.Count; i++)
+        {
+            Vector2Int entityPos = entitys[i].GetPos();
+            if (GetTile(entityPos.x, entityPos.y).GetValue() == lightLevelAmount)
+            {
+                dungeonGrid.SetSpriteActive(entitys[i].GetID(), false);
+            }
+            else
+            {
+                dungeonGrid.SetSpriteActive(entitys[i].GetID(), true);
+            }
         }
     }
 

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class EnemyIdleState : EnemyBaseState
 {
+    public int TargetRange; //range from currentPos a targetPos can be chosen
+    
     private Tile targetTile;
 
     public override void OnStart()
@@ -17,7 +19,11 @@ public class EnemyIdleState : EnemyBaseState
         List<Tile> path = aStar.CalcPath(enemy.GetCurrentTile(), targetTile, dungeonGrid, walkableTiles);
         if (path != null && path.Count >= 1 && path.Count <= GiveUpLenght)
         {
-            enemy.SetPos(path[0].GetPos());
+            Vector2Int pathPos = path[0].GetPos();
+            if (dungeonGrid.IsTileAvailible(pathPos.x, pathPos.y, dungeonGrid.walkableTiles))
+            {
+                enemy.SetPos(pathPos);
+            }
         }
         else
         {

@@ -133,7 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 662732436}
   - component: {fileID: 662732437}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: DungeonGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -379,7 +379,7 @@ GameObject:
   - component: {fileID: 991295275}
   - component: {fileID: 991295273}
   - component: {fileID: 991295272}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -579,7 +579,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2001503559}
   - component: {fileID: 2001503558}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Lightgrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -631,7 +631,7 @@ GameObject:
   - component: {fileID: 2005937976}
   - component: {fileID: 2005937979}
   - component: {fileID: 2005937978}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

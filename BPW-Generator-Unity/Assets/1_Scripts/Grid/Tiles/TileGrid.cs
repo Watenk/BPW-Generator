@@ -56,7 +56,7 @@ public class TileGrid : BaseClassLate
         }
     }
 
-    public bool IsTileAvailible(int x, int y, List<ID> allowedIDs)
+    public virtual bool IsTileAvailible(int x, int y, List<ID> allowedIDs)
     {
         if (GetTile(x, y) == null) { return false; }
 
