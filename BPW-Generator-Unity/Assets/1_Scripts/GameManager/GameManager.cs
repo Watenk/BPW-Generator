@@ -9,23 +9,28 @@ public class GameManager : MonoBehaviour
     public float PhysicsFrameRate; 
     private float physicsTimer;
 
+    private List<BaseClassEarly> baseClassEarlyList;
     private List<BaseClass> baseClassList;
     private List<BaseClassLate> baseClassLateList;
 
     private void Awake()
     {
+        baseClassEarlyList = new List<BaseClassEarly>();
         baseClassList = new List<BaseClass>();
         baseClassLateList = new List<BaseClassLate>();
 
+        baseClassEarlyList.AddRange(FindObjectsOfType<BaseClassEarly>());
         baseClassList.AddRange(FindObjectsOfType<BaseClass>());
         baseClassLateList.AddRange(FindObjectsOfType<BaseClassLate>());
 
+        for (int i = 0; i < baseClassEarlyList.Count; i++) { baseClassEarlyList[i].OnAwake(); }
         for (int i = 0; i < baseClassList.Count; i++) { baseClassList[i].OnAwake(); }
         for (int i = 0; i < baseClassLateList.Count; i++) { baseClassLateList[i].OnAwake(); }
     }
 
     private void Start()
     {
+        for (int i = 0; i < baseClassEarlyList.Count; i++) { baseClassEarlyList[i].OnStart(); }
         for (int i = 0; i < baseClassList.Count; i++) { baseClassList[i].OnStart(); }
         for (int i = 0; i < baseClassLateList.Count; i++) { baseClassLateList[i].OnStart(); }
         EventManager.OnNextTurn += OnNextTurn;
@@ -41,6 +46,7 @@ public class GameManager : MonoBehaviour
         }
         physicsTimer += Time.deltaTime;
 
+        for (int i = 0; i < baseClassEarlyList.Count; i++) { baseClassEarlyList[i].OnUpdate(); }
         for (int i = 0; i < baseClassList.Count; i++) { baseClassList[i].OnUpdate(); }
         for (int i = 0; i < baseClassLateList.Count; i++) { baseClassLateList[i].OnUpdate(); }
     }
@@ -52,6 +58,7 @@ public class GameManager : MonoBehaviour
 
     private void PhysicsUpdate()
     {
+        for (int i = 0; i < baseClassEarlyList.Count; i++) { baseClassEarlyList[i].OnPhysicsUpdate(); }
         for (int i = 0; i < baseClassList.Count; i++) { baseClassList[i].OnPhysicsUpdate(); }
         for (int i = 0; i < baseClassLateList.Count; i++) { baseClassLateList[i].OnPhysicsUpdate(); }
     }

@@ -20,6 +20,7 @@ public class DungeonGrid : TileGrid
     public int MaxRoomConnectDistance; //Max distance a room will search for another room to connect to
     public int RoomAvoidEdges; //Amount of tiles room will not generate from edge RoomTiles
     public int RetryFailedRoomGeneration; //Amount of times a room will trt to regenerate
+    public int LightSpawnChance; //Percentage a light will spawn in a room
 
     [Header("Entities")]
     public int PlayerSpawnRadius; //Radius around 0, 0 the player can spawn
@@ -41,11 +42,13 @@ public class DungeonGrid : TileGrid
     private Inputs inputs;
     private WatenkLib watenkLib;
     private AStar aStar;
+    private LightGrid lightGrid;
 
     public override void OnAwake()
     {
         gameManager = FindObjectOfType<GameManager>();
         inputs = FindObjectOfType<Inputs>();
+        lightGrid = FindObjectOfType<LightGrid>();
     }
 
     public override void OnStart()
@@ -185,7 +188,16 @@ public class DungeonGrid : TileGrid
 
     private void SpawnObjects()
     {
-        //Need to implement
+        //Lights
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            int spawnPercentage = Random.Range(1, 100);
+            if (spawnPercentage <= LightSpawnChance)
+            {
+                Vector2Int randomPos = rooms[i].GetRandomPos();
+                lightGrid.DrawLight(randomPos);
+            }
+        }
     }
 
     private void SpawnEntities()

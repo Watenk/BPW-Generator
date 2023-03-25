@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IntGridRenderer : BaseClass
+public class IntGridRenderer : BaseClassEarly
 {
     public IntGrid Grid;
     public int TileAmount;

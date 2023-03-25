@@ -11,12 +11,14 @@ public class Player : Alive
 
     private InputManager inputManager;
     private EventManager eventManager;
+    private LightGrid lightGrid;
 
     public override void OnAwake()
     {
         base.OnAwake();
         inputManager = FindObjectOfType<InputManager>();
         eventManager = FindObjectOfType<EventManager>();
+        lightGrid = FindObjectOfType<LightGrid>();
     }
 
     public override void OnStart()
@@ -30,14 +32,7 @@ public class Player : Alive
         if (!inputsLocked) { Checkinputs(); }
     }
 
-    private void NextTurnCheck()
-    {
-        if (!CheckRemainingMoves())
-        {
-            eventManager.TriggerNextTurn();
-            remainingMoves = MovesPerTurn;
-        }
-    }
+
 
     private void Checkinputs()
     {
@@ -65,8 +60,9 @@ public class Player : Alive
     public override void Move(Vector2Int direction)
     {
         base.Move(direction);
-        remainingMoves -= 1;
-        NextTurnCheck();
+        lightGrid.DrawLight(GetPos());
+        lightGrid.gridRenderer.Draw();
+        AddMove();
     }
 
     private bool CheckRemainingMoves()
@@ -76,5 +72,20 @@ public class Player : Alive
             return false;
         }
         return true;
+    }
+
+    private void AddMove()
+    {
+        remainingMoves -= 1;
+        NextTurnCheck();
+    }
+
+    private void NextTurnCheck()
+    {
+        if (!CheckRemainingMoves())
+        {
+            eventManager.TriggerNextTurn();
+            remainingMoves = MovesPerTurn;
+        }
     }
 }
