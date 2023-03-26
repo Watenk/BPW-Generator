@@ -24,6 +24,7 @@ public class Enemy : Alive
 
     public override void Die()
     {
+        EventManager.OnNextTurn -= OnNextTurn;
         dungeonGrid.RemoveEntity(this.gameObject);
         base.Die();
     }
