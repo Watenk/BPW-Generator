@@ -17,4 +17,8 @@ public abstract class EnemyBaseState : BaseState
         dungeonGrid = FindObjectOfType<DungeonGrid>();
         enemy = gameObject.GetComponent<Enemy>();
     }
+    public virtual void AttackPlayer(int damage)
+    {
+        dungeonGrid.RemoveHealth(0, damage);
+    }
 }

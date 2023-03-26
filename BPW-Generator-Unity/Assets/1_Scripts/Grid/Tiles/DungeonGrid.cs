@@ -25,11 +25,13 @@ public class DungeonGrid : TileGrid
     [Header("Entities")]
     public int PlayerSpawnRadius; //Radius around 0, 0 the player can spawn
     public int EnemySpawnChance; //Percentage a enemy will spawn
+    public int WizardSpawnChance; //Chance a enemy is a wizard
     public int EnemyMaxSpawnAmount; //Max amount of enemys per room
 
     [Header("Prefabs")]
     public GameObject PlayerPrefab;
-    public GameObject EnemyPrefab;
+    public GameObject SkeletonPrefab;
+    public GameObject WizardPrefab;
 
     private List<Alive> entitys = new List<Alive>();
     private List<Room> rooms = new List<Room>(); //List of rooms in map
@@ -149,26 +151,28 @@ public class DungeonGrid : TileGrid
         bool isUnallowedID = true;
         bool entity = false;
 
-        if (GetTile(x, y) == null) 
+        if (IsInGridBounds(x, y))
+        {
+            ID currentTileID = GetTile(x, y).GetID();
+            for (int i = 0; i < allowedIDs.Count; i++)
+            {
+                if (currentTileID == allowedIDs[i])
+                {
+                    isUnallowedID = false;
+                }
+            }
+
+            for (int i = 0; i < entitys.Count; i++)
+            {
+                if (entitys[i].GetPos() == new Vector2Int(x, y))
+                {
+                    entity = true;
+                }
+            }
+        }
+        else
         {
             isNull = true;
-        }
-
-        ID currentTileID = GetTile(x, y).GetID();
-        for (int i = 0; i < allowedIDs.Count; i++)
-        {
-            if (currentTileID == allowedIDs[i])
-            {
-                isUnallowedID = false;
-            }
-        }
-
-        for (int i = 0; i < entitys.Count; i++)
-        {
-            if (entitys[i].GetPos() == new Vector2Int(x, y))
-            {
-                entity = true;
-            }
         }
 
         if (isNull == false && isUnallowedID == false && entity == false)
@@ -230,6 +234,21 @@ public class DungeonGrid : TileGrid
         nextEntityID++;
     }
 
+    public void RemoveEntity(GameObject enemy)
+    {
+        entitys.Remove(enemy.GetComponent<Alive>());
+    }
+
+    public void RemoveHealth(int id, int value)
+    {
+        entitys[id].RemoveHealth(value);
+    }
+
+    public void AddHealth(int id, int value)
+    {
+        entitys[id].AddHealth(value);
+    }
+
     //Terrain / Dungeon generation -------------------------------------------------
 
     private void SpawnObjects()
@@ -270,7 +289,14 @@ public class DungeonGrid : TileGrid
                     Vector2Int currentEnemySpawnPos = currentRoom.GetRandomPos();
                     if (GetEntity(currentEnemySpawnPos) == null)
                     {
-                        AddEntity(EnemyPrefab, currentEnemySpawnPos);
+                        if (Random.Range(1, 100) <= WizardSpawnChance)
+                        {
+                            AddEntity(WizardPrefab, currentEnemySpawnPos);
+                        }
+                        else
+                        {
+                            AddEntity(SkeletonPrefab, currentEnemySpawnPos);
+                        }
                     }
                     else
                     {

@@ -4,20 +4,24 @@ using UnityEngine;
 
 public class Alive : BaseClass
 {
-    private Vector2Int pos;
     public int ID;
     public GameObject sprite;
+    public int Health;
 
     protected static Vector2Int up = new Vector2Int(0, -1);
     protected static Vector2Int right = new Vector2Int(1, 0);
     protected static Vector2Int down = new Vector2Int(0, 1);
     protected static Vector2Int left = new Vector2Int(-1, 0);
 
+    private Vector2Int pos;
+
     protected DungeonGrid dungeonGrid;
+    private GameManager gameManager;
 
     public override void OnAwake()
     {
         dungeonGrid = FindObjectOfType<DungeonGrid>();
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     public override void OnStart()
@@ -35,6 +39,11 @@ public class Alive : BaseClass
     public int GetID()
     {
         return ID;
+    }
+
+    public int GetHealth()
+    {
+        return Health;
     }
 
     public Tile GetCurrentTile()
@@ -55,6 +64,24 @@ public class Alive : BaseClass
         ID = newID; 
     }
 
+    public void SetHealth(int value)
+    {
+        Health = value;
+        CheckIfDeath();
+    }
+
+    public void AddHealth(int value)
+    {
+        Health += value;
+        CheckIfDeath();
+    }
+
+    public void RemoveHealth(int value)
+    {
+        Health -= value;
+        CheckIfDeath();
+    }
+
     //Functions---------------------------------------
 
     public virtual void Move(Vector2Int direction)
@@ -65,6 +92,19 @@ public class Alive : BaseClass
         if (dungeonGrid.IsTileAvailible(newPos.x, newPos.y, dungeonGrid.walkableTiles))
         {
             SetPos(newPos);
+        }
+    }
+
+    public virtual void Die()
+    {
+        gameManager.RemoveObject(this.gameObject);
+    }
+
+    private void CheckIfDeath()
+    {
+        if (Health <= 0)
+        {
+            Die();
         }
     }
 

@@ -185,10 +185,12 @@ MonoBehaviour:
   RetryFailedRoomGeneration: 10000
   LightSpawnChance: 50
   PlayerSpawnRadius: 40
-  EnemySpawnChance: 100
-  EnemyMaxSpawnAmount: 1
+  EnemySpawnChance: 60
+  WizardSpawnChance: 20
+  EnemyMaxSpawnAmount: 2
   PlayerPrefab: {fileID: 4003422317840242220, guid: 0c778fe724419ce43ab35613ef96dc6e, type: 3}
-  EnemyPrefab: {fileID: 6900312534725690762, guid: a84fc604258344d40a6b7f7f2dbb0c2c, type: 3}
+  SkeletonPrefab: {fileID: 6900312534725690762, guid: a84fc604258344d40a6b7f7f2dbb0c2c, type: 3}
+  WizardPrefab: {fileID: 6900312534725690762, guid: fad284644bab291439c9833cb36e7c09, type: 3}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

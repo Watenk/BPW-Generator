@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyIdleState : EnemyBaseState
+public class WizardIdleState : EnemyBaseState
 {
     public int TargetRange; //range from currentPos a targetPos can be chosen
-    
+
     private Tile targetTile;
 
     public override void OnStart()

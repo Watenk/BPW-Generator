@@ -7,32 +7,29 @@ public class Enemy : Alive
     public int PlayerDetectRange;
     public FSM attackState;
 
+    protected AStar aStar;
+
     public override void OnStart()
     {
         base.OnStart();
+        aStar = new AStar();
         attackState = new FSM(GetComponents<BaseState>());
-        attackState.SwitchState(typeof(EnemyIdleState));
     }
 
     public override void OnNextTurn()
     {
-        UpdateState();
+        UpdateStates();
         attackState.OnUpdate();
     }
 
-    private void UpdateState()
+    public override void Die()
     {
-        Vector2Int enemyPos = GetPos();
-        Vector2Int playerPos = dungeonGrid.GetEntity(0).GetPos();
+        dungeonGrid.RemoveEntity(this.gameObject);
+        base.Die();
+    }
 
-        int distance = Mathf.Abs(playerPos.x - enemyPos.x) + Mathf.Abs(playerPos.y - enemyPos.y);
-        if (distance <= PlayerDetectRange)
-        {
-            attackState.SwitchState(typeof(EnemyAttackState));
-        }
-        else
-        {
-            attackState.SwitchState(typeof(EnemyIdleState));
-        }
+    public virtual void UpdateStates()
+    {
+
     }
 }

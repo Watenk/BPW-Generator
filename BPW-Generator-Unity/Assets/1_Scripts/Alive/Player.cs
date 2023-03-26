@@ -8,6 +8,7 @@ public class Player : Alive
     public int MoveCost; //amount of moves subtracts after moving a tile
     public int ReplaceTileCost; //Amount of moves subtracts after replacing a tile
     public int remainingMoves;
+    public int Damage; //Amount of damage player does
 
     private bool inputsLocked;
 
@@ -71,11 +72,21 @@ public class Player : Alive
             AddMove(MoveCost);
         }
         //Replace a tile
-        else if (dungeonGrid.IsInGridBounds(newPos.x, newPos.y))
+        else if (dungeonGrid.IsInGridBounds(newPos.x, newPos.y) && dungeonGrid.GetEntity(newPos) == null)
         {
             dungeonGrid.SetTile(newPos.x, newPos.y, global::ID.pavedStone, true);
             AddMove(ReplaceTileCost);
         }
+        //Attack Enemy
+        else if (dungeonGrid.GetEntity(newPos) != null)
+        {
+            AttackEnemy(dungeonGrid.GetEntity(newPos));
+        }
+    }
+
+    private void AttackEnemy(Alive enemy)
+    {
+        enemy.RemoveHealth(Damage);
     }
 
     private bool CheckRemainingMoves()

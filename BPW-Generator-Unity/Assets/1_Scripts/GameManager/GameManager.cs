@@ -83,9 +83,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void RemoveObject(BaseClass _object)
+    public void RemoveObject(GameObject currentObject)
     {
-        baseClassList.Remove(_object);
-        Destroy(_object.gameObject);
+
+        BaseClass[] scripts = currentObject.GetComponents<BaseClass>();
+
+        for (int i = 0; i < scripts.Length; i++)
+        {
+            baseClassList.Remove(scripts[i]);
+        }
+
+        Destroy(currentObject.gameObject);
     }
 }

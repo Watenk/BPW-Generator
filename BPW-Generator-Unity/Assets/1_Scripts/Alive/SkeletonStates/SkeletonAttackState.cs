@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAttackState : EnemyBaseState
+public class SkeletonAttackState : EnemyBaseState
 {
+    public int Damage;
+
     public override void OnUpdate()
     {
         base.OnUpdate();
@@ -16,6 +18,13 @@ public class EnemyAttackState : EnemyBaseState
             if (dungeonGrid.IsTileAvailible(pathPos.x, pathPos.y, dungeonGrid.walkableTiles))
             {
                 enemy.SetPos(pathPos);
+            }
+            else
+            {
+                if (dungeonGrid.GetEntity(0).GetPos() == path[0].GetPos()) //Attack player
+                {
+                    AttackPlayer(Damage);
+                }
             }
         }
     }
