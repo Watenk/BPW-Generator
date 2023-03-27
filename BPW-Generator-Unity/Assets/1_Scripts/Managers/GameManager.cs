@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public int currentTurn;
+
     //Ups
     public float PhysicsFrameRate; 
     private float physicsTimer;
@@ -13,8 +14,12 @@ public class GameManager : MonoBehaviour
     private List<BaseClass> baseClassList;
     private List<BaseClassLate> baseClassLateList;
 
+    private UI ui;
+
     private void Awake()
     {
+        ui = FindObjectOfType<UI>();
+
         baseClassEarlyList = new List<BaseClassEarly>();
         baseClassList = new List<BaseClass>();
         baseClassLateList = new List<BaseClassLate>();
@@ -54,6 +59,7 @@ public class GameManager : MonoBehaviour
     private void OnNextTurn()
     {
         currentTurn++;
+        ui.UpdateCurrentTurn(currentTurn);
     }
 
     private void PhysicsUpdate()

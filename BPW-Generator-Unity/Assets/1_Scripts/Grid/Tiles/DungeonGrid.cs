@@ -43,6 +43,7 @@ public class DungeonGrid : TileGrid
     private float perlinYOffset;
     private int nextEntityID;
     private int nextGridObjectID;
+    private int totalCrystals;
 
     //References
     private GameManager gameManager;
@@ -50,12 +51,14 @@ public class DungeonGrid : TileGrid
     private WatenkLib watenkLib;
     private AStar aStar;
     private LightGrid lightGrid;
+    private UI ui;
 
     public override void OnAwake()
     {
         gameManager = FindObjectOfType<GameManager>();
         inputs = FindObjectOfType<Inputs>();
         lightGrid = FindObjectOfType<LightGrid>();
+        ui = FindObjectOfType<UI>();
     }
 
     public override void OnStart()
@@ -72,6 +75,7 @@ public class DungeonGrid : TileGrid
         SpawnObjects();
         gridRenderer.Draw();
         lightGrid.UpdateLights();
+        ui.UpdateCrystalAmount(0, GetTotalCrystals());
     }
 
     //Getters -----------------------------------------------------------
@@ -105,6 +109,18 @@ public class DungeonGrid : TileGrid
         for (int i = 0; i < gridObjects.Count; i++)
         {
             if (gridObjects[i].GetId() == ID)
+            {
+                return gridObjects[i];
+            }
+        }
+        return null;
+    }
+
+    public GridObject GetGridObject(Vector2Int pos)
+    {
+        for (int i = 0; i < gridObjects.Count; i++)
+        {
+            if (gridObjects[i].GetPos() == pos)
             {
                 return gridObjects[i];
             }
@@ -169,9 +185,10 @@ public class DungeonGrid : TileGrid
 
     public override bool IsTileAvailible(int x, int y, List<ID> allowedIDs)
     {
-        bool isNull = false;
+        bool isOutOfBounds = false;
         bool isUnallowedID = true;
         bool entity = false;
+        bool gridObject = false;
 
         if (IsInGridBounds(x, y))
         {
@@ -191,17 +208,30 @@ public class DungeonGrid : TileGrid
                     entity = true;
                 }
             }
+
+            for (int i = 0; i < gridObjects.Count; i++)
+            {
+                if (gridObjects[i].GetPos() == new Vector2Int(x, y))
+                {
+                    gridObject = true;
+                }
+            }
         }
         else
         {
-            isNull = true;
+            isOutOfBounds = true;
         }
 
-        if (isNull == false && isUnallowedID == false && entity == false)
+        if (isOutOfBounds == false && isUnallowedID == false && entity == false && gridObject == false)
         {
             return true;
         }
         return false;
+    }
+
+    public int GetTotalCrystals()
+    {
+        return totalCrystals;
     }
 
     public Tile GetRandomTile(List<ID> allowedTiles)
@@ -235,7 +265,6 @@ public class DungeonGrid : TileGrid
     }
 
     //Setters / Adders 
-
     public void SetEntitySpriteActive(int id ,bool value)
     {
         GetEntity(id).sprite.SetActive(value);
@@ -261,13 +290,14 @@ public class DungeonGrid : TileGrid
         nextEntityID++;
     }
 
-    private void AddObject(GameObject prefab, Vector2Int pos)
+    private void AddObject(GameObject prefab, Vector2Int pos, objectID objectID)
     {
         //Instantiate
         GridObject currentObject = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<GridObject>();
         currentObject.transform.SetParent(this.gameObject.transform);
         //Values
         currentObject.SetId(nextGridObjectID);
+        currentObject.SetObjectID(objectID);
         currentObject.SetPos(pos);
         //Lists
         gridObjects.Add(currentObject);
@@ -319,7 +349,8 @@ public class DungeonGrid : TileGrid
                 Vector2Int randomPos = rooms[i].GetRandomPos();
                 if (IsTileAvailible(randomPos.x, randomPos.y, walkableTiles))
                 {
-                    AddObject(CrystalPrefab, randomPos);
+                    AddObject(CrystalPrefab, randomPos, objectID.crystal);
+                    totalCrystals++;
                 }
                 else
                 {

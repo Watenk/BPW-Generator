@@ -12,6 +12,7 @@ public class Player : Alive
     public GameObject AttackParticle;
 
     private bool inputsLocked;
+    private int collectedCrystals;
 
     private InputManager inputManager;
     private EventManager eventManager;
@@ -75,7 +76,7 @@ public class Player : Alive
             AddMove(MoveCost);
         }
         //Replace a tile
-        else if (dungeonGrid.IsInGridBounds(newPos.x, newPos.y) && dungeonGrid.GetEntity(newPos) == null)
+        else if (dungeonGrid.IsInGridBounds(newPos.x, newPos.y) && !dungeonGrid.walkableTiles.Contains(dungeonGrid.GetTile(newPos.x, newPos.y).GetID()))
         {
             dungeonGrid.SetTile(newPos.x, newPos.y, global::ID.pavedStone, true);
             AddMove(ReplaceTileCost);
@@ -84,6 +85,19 @@ public class Player : Alive
         else if (dungeonGrid.GetEntity(newPos) != null)
         {
             AttackEnemy(dungeonGrid.GetEntity(newPos));
+        }
+        //Pickup item
+        else if (dungeonGrid.GetGridObject(newPos) != null)
+        {
+            GridObject currentObject = dungeonGrid.GetGridObject(newPos);
+            if (currentObject.GetObjectID() == objectID.crystal)
+            {
+                collectedCrystals++;
+                ui.UpdateCrystalAmount(collectedCrystals, dungeonGrid.GetTotalCrystals());
+            }
+
+            dungeonGrid.RemoveGridObject(currentObject.gameObject);
+            currentObject.PickUp();
         }
     }
 

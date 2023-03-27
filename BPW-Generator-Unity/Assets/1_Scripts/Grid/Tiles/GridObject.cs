@@ -16,6 +16,18 @@ public class GridObject : BaseClass
     private int id;
     private objectID objectID;
 
+    private GameManager gameManager;
+
+    public override void OnAwake()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+    }
+
+    public void PickUp()
+    {
+        gameManager.RemoveObject(this.gameObject);
+    }
+
     public Vector2Int GetPos()
     {
         return pos;
