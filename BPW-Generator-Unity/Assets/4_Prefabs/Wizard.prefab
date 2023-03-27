@@ -134,6 +134,7 @@ MonoBehaviour:
   ID: 0
   sprite: {fileID: 6900312533615450474}
   Health: 5
+  DamagedParticle: {fileID: 5048974570284860503, guid: cfb9a8fd39da6ee4cbef332e5f2fcb8c, type: 3}
   PlayerDetectRange: 15
 --- !u!114 &3879313761412159052
 MonoBehaviour:
@@ -149,6 +150,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GiveUpLenght: 30
   walkableTiles: 0200000005000000
+  AttackParticle: {fileID: 4508729341506746619, guid: a5e341b92d86de74084336d9356f5148, type: 3}
   Damage: 5
   ShootRange: 5
   ShootChance: 50
@@ -166,4 +168,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GiveUpLenght: 30
   walkableTiles: 0200000005000000
+  AttackParticle: {fileID: 4508729341506746619, guid: a5e341b92d86de74084336d9356f5148, type: 3}
   TargetRange: 5

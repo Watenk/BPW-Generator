@@ -7,6 +7,7 @@ public class Alive : BaseClass
     public int ID;
     public GameObject sprite;
     public int Health;
+    public GameObject DamagedParticle;
 
     protected static Vector2Int up = new Vector2Int(0, -1);
     protected static Vector2Int right = new Vector2Int(1, 0);
@@ -76,9 +77,10 @@ public class Alive : BaseClass
         CheckIfDeath();
     }
 
-    public void RemoveHealth(int value)
+    public virtual void RemoveHealth(int value)
     {
         Health -= value;
+        Instantiate(DamagedParticle, new Vector3(GetPos().x, -GetPos().y, -2), Quaternion.identity);
         CheckIfDeath();
     }
 

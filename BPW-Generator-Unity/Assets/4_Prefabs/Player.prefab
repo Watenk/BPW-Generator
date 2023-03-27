@@ -48,11 +48,13 @@ MonoBehaviour:
   ID: 0
   sprite: {fileID: 6930583470090431047}
   Health: 100
+  DamagedParticle: {fileID: 5048974570284860503, guid: cfb9a8fd39da6ee4cbef332e5f2fcb8c, type: 3}
   MovesPerTurn: 2
   MoveCost: 1
   ReplaceTileCost: 6
   remainingMoves: 0
   Damage: 5
+  AttackParticle: {fileID: 4508729341506746619, guid: a5e341b92d86de74084336d9356f5148, type: 3}
 --- !u!1 &6930583470090431047
 GameObject:
   m_ObjectHideFlags: 0

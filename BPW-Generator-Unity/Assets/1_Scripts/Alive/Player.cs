@@ -9,12 +9,14 @@ public class Player : Alive
     public int ReplaceTileCost; //Amount of moves subtracts after replacing a tile
     public int remainingMoves;
     public int Damage; //Amount of damage player does
+    public GameObject AttackParticle;
 
     private bool inputsLocked;
 
     private InputManager inputManager;
     private EventManager eventManager;
     private LightGrid lightGrid;
+    private UI ui;
 
     public override void OnAwake()
     {
@@ -22,6 +24,7 @@ public class Player : Alive
         inputManager = FindObjectOfType<InputManager>();
         eventManager = FindObjectOfType<EventManager>();
         lightGrid = FindObjectOfType<LightGrid>();
+        ui = FindObjectOfType<UI>();
     }
 
     public override void OnStart()
@@ -84,9 +87,17 @@ public class Player : Alive
         }
     }
 
+    public override void RemoveHealth(int value)
+    {
+        base.RemoveHealth(value);
+        ui.UpdatePlayerHealth(Health);
+    }
+
     private void AttackEnemy(Alive enemy)
     {
         enemy.RemoveHealth(Damage);
+        Instantiate(AttackParticle, new Vector3(GetPos().x, -GetPos().y, -2), Quaternion.identity);
+        AddMove(1);
     }
 
     private bool CheckRemainingMoves()

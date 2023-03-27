@@ -6,6 +6,7 @@ public abstract class EnemyBaseState : BaseState
 {
     public int GiveUpLenght; //Give up if path is longer 
     public List<ID> walkableTiles = new List<ID>();
+    public GameObject AttackParticle;
 
     protected AStar aStar;
     protected DungeonGrid dungeonGrid;
@@ -20,5 +21,6 @@ public abstract class EnemyBaseState : BaseState
     public virtual void AttackPlayer(int damage)
     {
         dungeonGrid.RemoveHealth(0, damage);
+        Instantiate(AttackParticle, new Vector3(enemy.GetPos().x, -enemy.GetPos().y, -2), Quaternion.identity);
     }
 }

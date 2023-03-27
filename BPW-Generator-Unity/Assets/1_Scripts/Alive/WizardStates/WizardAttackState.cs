@@ -24,11 +24,14 @@ public class WizardAttackState : EnemyBaseState
                 {
                     if (dungeonGrid.IsInGridBounds(x, y))
                     {
-                        if (dungeonGrid.GetEntity(pathPos).GetID() == 0)
+                        if (dungeonGrid.GetEntity(new Vector2Int(x, y)) != null)
                         {
-                            if (Random.Range(1, 100) < ShootChance)
+                            if (dungeonGrid.GetEntity(new Vector2Int(x, y)).GetID() == 0)
                             {
-                                AttackPlayer(Damage);
+                                if (Random.Range(1, 100) < ShootChance)
+                                {
+                                    AttackPlayer(Damage);
+                                }
                             }
                         }
                     }
