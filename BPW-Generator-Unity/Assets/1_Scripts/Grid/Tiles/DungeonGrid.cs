@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static EventManager;
 
 public class DungeonGrid : TileGrid
 {
@@ -21,6 +22,7 @@ public class DungeonGrid : TileGrid
     public int RoomAvoidEdges; //Amount of tiles room will not generate from edge RoomTiles
     public int RetryFailedRoomGeneration; //Amount of times a room will trt to regenerate
     public int LightSpawnChance; //Percentage a light will spawn in a room
+    public int CrystalSpawnChance; //Percentage a Crystal will spawn in a room
 
     [Header("Entities")]
     public int PlayerSpawnRadius; //Radius around 0, 0 the player can spawn
@@ -32,12 +34,15 @@ public class DungeonGrid : TileGrid
     public GameObject PlayerPrefab;
     public GameObject SkeletonPrefab;
     public GameObject WizardPrefab;
+    public GameObject CrystalPrefab;
 
-    private List<Alive> entitys = new List<Alive>();
+    private List<Alive> entitys = new List<Alive>(); //List of entity's in map
     private List<Room> rooms = new List<Room>(); //List of rooms in map
+    private List<GridObject> gridObjects = new List<GridObject>(); // List of gridObjects in map
     private float perlinXOffset;
     private float perlinYOffset;
     private int nextEntityID;
+    private int nextGridObjectID;
 
     //References
     private GameManager gameManager;
@@ -95,9 +100,26 @@ public class DungeonGrid : TileGrid
         return null;
     }
 
+    public GridObject GetGridObject(int ID)
+    {
+        for (int i = 0; i < gridObjects.Count; i++)
+        {
+            if (gridObjects[i].GetId() == ID)
+            {
+                return gridObjects[i];
+            }
+        }
+        return null;
+    }
+
     public List<Alive> GetEntitys()
     {
         return entitys;
+    }
+
+    public List<GridObject> GetGridObjects()
+    {
+        return gridObjects;
     }
 
     private Room GetClosestRoom(Room room)
@@ -214,9 +236,14 @@ public class DungeonGrid : TileGrid
 
     //Setters / Adders 
 
-    public void SetSpriteActive(int id ,bool value)
+    public void SetEntitySpriteActive(int id ,bool value)
     {
         GetEntity(id).sprite.SetActive(value);
+    }
+
+    public void SetGridObjectSpriteAtcive(int id, bool value)
+    {
+        GetGridObject(id).sprite.SetActive(value);
     }
 
     private void AddEntity(GameObject prefab, Vector2Int pos)
@@ -234,9 +261,29 @@ public class DungeonGrid : TileGrid
         nextEntityID++;
     }
 
+    private void AddObject(GameObject prefab, Vector2Int pos)
+    {
+        //Instantiate
+        GridObject currentObject = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<GridObject>();
+        currentObject.transform.SetParent(this.gameObject.transform);
+        //Values
+        currentObject.SetId(nextGridObjectID);
+        currentObject.SetPos(pos);
+        //Lists
+        gridObjects.Add(currentObject);
+        gameManager.AddObject(currentObject.gameObject);
+
+        nextGridObjectID++;
+    }
+
     public void RemoveEntity(GameObject enemy)
     {
         entitys.Remove(enemy.GetComponent<Alive>());
+    }
+
+    public void RemoveGridObject(GameObject gridObject)
+    {
+        gridObjects.Remove(gridObject.GetComponent<GridObject>());
     }
 
     public void RemoveHealth(int id, int value)
@@ -256,13 +303,31 @@ public class DungeonGrid : TileGrid
         //Lights
         for (int i = 0; i < rooms.Count; i++)
         {
-            int spawnPercentage = Random.Range(1, 100);
-            if (spawnPercentage <= LightSpawnChance)
+            if (Random.Range(1, 100) <= LightSpawnChance)
             {
                 Vector2Int randomPos = rooms[i].GetRandomPos();
                 lightGrid.AddLight(randomPos);
             }
         }
+
+        //Crystals
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            if (Random.Range(1, 100) <= LightSpawnChance)
+            {
+                retry:
+                Vector2Int randomPos = rooms[i].GetRandomPos();
+                if (IsTileAvailible(randomPos.x, randomPos.y, walkableTiles))
+                {
+                    AddObject(CrystalPrefab, randomPos);
+                }
+                else
+                {
+                    goto retry;
+                }
+            }
+        }
+        Debug.Log(nextGridObjectID + " gridObjects's Summoned");
     }
 
     private void SpawnEntities()

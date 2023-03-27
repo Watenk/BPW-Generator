@@ -52,6 +52,7 @@ public class LightGrid : IntGrid
             }
         }
         CullEntitys();
+        CullObjects();
         gridRenderer.Draw();
     }
 
@@ -85,11 +86,28 @@ public class LightGrid : IntGrid
             Vector2Int entityPos = entitys[i].GetPos();
             if (GetTile(entityPos.x, entityPos.y).GetValue() == lightLevelAmount)
             {
-                dungeonGrid.SetSpriteActive(entitys[i].GetID(), false);
+                dungeonGrid.SetEntitySpriteActive(entitys[i].GetID(), false);
             }
             else
             {
-                dungeonGrid.SetSpriteActive(entitys[i].GetID(), true);
+                dungeonGrid.SetEntitySpriteActive(entitys[i].GetID(), true);
+            }
+        }
+    }
+
+    private void CullObjects()
+    {
+        List<GridObject> gridObjects = dungeonGrid.GetGridObjects();
+        for (int i = 0; i < gridObjects.Count; i++)
+        {
+
+            if (GetTile(gridObjects[i].GetPos().x, gridObjects[i].GetPos().y).GetValue() == 11)
+            {
+                dungeonGrid.SetGridObjectSpriteAtcive(gridObjects[i].GetId(), false);
+            }
+            else
+            {
+                dungeonGrid.SetGridObjectSpriteAtcive(gridObjects[i].GetId(), true);
             }
         }
     }
