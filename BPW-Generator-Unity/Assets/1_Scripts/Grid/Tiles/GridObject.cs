@@ -6,6 +6,7 @@ public enum objectID
 {
     none,
     crystal,
+    healthPotion,
 }
 
 public class GridObject : BaseClass

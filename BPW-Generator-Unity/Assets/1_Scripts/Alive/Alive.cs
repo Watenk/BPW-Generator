@@ -30,6 +30,11 @@ public class Alive : BaseClass
         EventManager.OnNextTurn += OnNextTurn;
     }
 
+    public void OnDisable()
+    {
+        EventManager.OnNextTurn -= OnNextTurn;
+    }
+
     //Getters----------------------------------------
 
     public Vector2Int GetPos() 

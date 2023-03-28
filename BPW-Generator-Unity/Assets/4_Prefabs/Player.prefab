@@ -52,7 +52,9 @@ MonoBehaviour:
   MovesPerTurn: 2
   MoveCost: 1
   ReplaceTileCost: 6
+  PickupItemCost: 6
   remainingMoves: 0
+  HealthPotionHealAmount: 3
   Damage: 5
   AttackParticle: {fileID: 4508729341506746619, guid: a5e341b92d86de74084336d9356f5148, type: 3}
 --- !u!1 &6930583470090431047

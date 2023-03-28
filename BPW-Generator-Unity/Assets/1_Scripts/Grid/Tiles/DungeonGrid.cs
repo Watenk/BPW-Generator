@@ -29,12 +29,14 @@ public class DungeonGrid : TileGrid
     public int EnemySpawnChance; //Percentage a enemy will spawn
     public int WizardSpawnChance; //Chance a enemy is a wizard
     public int EnemyMaxSpawnAmount; //Max amount of enemys per room
+    public int HealthPotionSpawnChance; //Chance in percentages that a healthPotion will spawn in a room
 
     [Header("Prefabs")]
     public GameObject PlayerPrefab;
     public GameObject SkeletonPrefab;
     public GameObject WizardPrefab;
     public GameObject CrystalPrefab;
+    public GameObject HealthPotionPrefab;
 
     private List<Alive> entitys = new List<Alive>(); //List of entity's in map
     private List<Room> rooms = new List<Room>(); //List of rooms in map
@@ -75,7 +77,7 @@ public class DungeonGrid : TileGrid
         SpawnObjects();
         gridRenderer.Draw();
         lightGrid.UpdateLights();
-        ui.UpdateCrystalAmount(0, GetTotalCrystals());
+        ui.UpdateTotalCrystals(GetTotalCrystals());
     }
 
     //Getters -----------------------------------------------------------
@@ -345,12 +347,30 @@ public class DungeonGrid : TileGrid
         {
             if (Random.Range(1, 100) <= LightSpawnChance)
             {
-                retry:
+            retry:
                 Vector2Int randomPos = rooms[i].GetRandomPos();
                 if (IsTileAvailible(randomPos.x, randomPos.y, walkableTiles))
                 {
                     AddObject(CrystalPrefab, randomPos, objectID.crystal);
                     totalCrystals++;
+                }
+                else
+                {
+                    goto retry;
+                }
+            }
+        }
+
+        //Health Potions
+        for (int i = 0; i < rooms.Count; i++)
+        {
+            if (Random.Range(1, 100) <= HealthPotionSpawnChance)
+            {
+            retry:
+                Vector2Int randomPos = rooms[i].GetRandomPos();
+                if (IsTileAvailible(randomPos.x, randomPos.y, walkableTiles))
+                {
+                    AddObject(HealthPotionPrefab, randomPos, objectID.healthPotion);
                 }
                 else
                 {

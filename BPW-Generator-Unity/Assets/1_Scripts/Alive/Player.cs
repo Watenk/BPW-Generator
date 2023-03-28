@@ -1,18 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : Alive
 {
     public int MovesPerTurn; //Amount of moves the player can do before ending the turn
     public int MoveCost; //amount of moves subtracts after moving a tile
     public int ReplaceTileCost; //Amount of moves subtracts after replacing a tile
+    public int PickupItemCost;
     public int remainingMoves;
+    public int HealthPotionHealAmount; //Amount of health a potion heals
     public int Damage; //Amount of damage player does
     public GameObject AttackParticle;
 
     private bool inputsLocked;
-    private int collectedCrystals;
+    private Dictionary<objectID, int> inventory = new Dictionary<objectID, int>();
 
     private InputManager inputManager;
     private EventManager eventManager;
@@ -33,6 +36,7 @@ public class Player : Alive
         base.OnStart();
         remainingMoves = MovesPerTurn;
         lightGrid.AddLight(GetPos());
+        EventManager.OnHealthPotionUsed += UseHealthPotion;
     }
 
     public override void OnUpdate()
@@ -90,21 +94,79 @@ public class Player : Alive
         else if (dungeonGrid.GetGridObject(newPos) != null)
         {
             GridObject currentObject = dungeonGrid.GetGridObject(newPos);
-            if (currentObject.GetObjectID() == objectID.crystal)
+            //Inventory
+            if (inventory.ContainsKey(currentObject.GetObjectID()))
             {
-                collectedCrystals++;
-                ui.UpdateCrystalAmount(collectedCrystals, dungeonGrid.GetTotalCrystals());
+                inventory.TryGetValue(currentObject.GetObjectID(), out int value);
+                value++;
+                inventory[currentObject.GetObjectID()] = value;
             }
-
+            else
+            {
+                inventory.Add(currentObject.GetObjectID(), 1);
+            }
+            //Grid
             dungeonGrid.RemoveGridObject(currentObject.gameObject);
             currentObject.PickUp();
+            AddMove(PickupItemCost);
+            CheckWinCondition();
+
+            //UI
+            ui.UpdateInventoryUI(inventory);
         }
+    }
+
+    public void UseHealthPotion()
+    {
+        if (inventory.ContainsKey(objectID.healthPotion))
+        {
+            inventory.TryGetValue(objectID.healthPotion, out int value);
+            if (value >= 1 && GetHealth() < 100)
+            {
+                //Inventory
+                value -= 1;
+                AddHealth(HealthPotionHealAmount);
+                AddMove(2);
+                inventory[objectID.healthPotion] = value;
+                //UI
+                ui.UpdateInventoryUI(inventory);
+                ui.UpdatePlayerHealth(GetHealth());
+            }
+        }
+    }
+
+    public override void Die()
+    {
+        base.Die();
+        SceneManager.LoadScene("MainMenu");
     }
 
     public override void RemoveHealth(int value)
     {
         base.RemoveHealth(value);
         ui.UpdatePlayerHealth(Health);
+    }
+
+    private void CheckWinCondition()
+    {
+        inventory.TryGetValue(objectID.crystal, out int value);
+        if (value >= dungeonGrid.GetTotalCrystals())
+        {
+            if (SceneManager.GetActiveScene() == SceneManager.GetSceneByName("tutorial"))
+            {
+                SceneManager.LoadScene("MainMenu");
+            }
+
+            if (SceneManager.GetActiveScene() == SceneManager.GetSceneByName("lvl01"))
+            {
+                SceneManager.LoadScene("lvl02");
+            }
+
+            if (SceneManager.GetActiveScene() == SceneManager.GetSceneByName("lvl02"))
+            {
+                SceneManager.LoadScene("MainMenu");
+            }
+        }
     }
 
     private void AttackEnemy(Alive enemy)

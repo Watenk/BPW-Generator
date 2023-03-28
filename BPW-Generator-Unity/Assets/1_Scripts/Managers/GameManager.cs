@@ -56,6 +56,11 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < baseClassLateList.Count; i++) { baseClassLateList[i].OnUpdate(); }
     }
 
+    public void OnDisable()
+    {
+        EventManager.OnNextTurn -= OnNextTurn;
+    }
+
     private void OnNextTurn()
     {
         currentTurn++;
